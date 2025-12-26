@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../App.css";
-import logo from '../logo.svg';
+import logo from "../logo.svg";
 
 export function UploadPage() {
     const [state, setState] = useState("ready to upload");
@@ -50,10 +50,13 @@ export function UploadPage() {
     }
 
     async function checkConnection(headers: Headers) {
-        const results = await fetch("http://192.168.1.11:8080/api/user/info", {
-            method: "GET",
-            headers: headers,
-        })
+        const results = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/user/info`,
+            {
+                method: "GET",
+                headers: headers,
+            }
+        )
             .then((r) => r.json())
             .catch((err) => console.log(err));
         console.log("results", results);
@@ -69,6 +72,8 @@ export function UploadPage() {
             document.getElementById("folderIDSelector") as HTMLInputElement
         ).value;
 
+        console.log("folderid", folderID_upload);
+
         if (typeof files === "undefined") {
             console.error("No file uploaded");
             return;
@@ -76,17 +81,26 @@ export function UploadPage() {
         const formData = new FormData();
 
         for (let i = 0; i < files.length; i++) {
-            formData.append("folderid", folderID_upload);
+            formData.append("files", files[i]);
         }
-        let headers = getAuthorizationHeader();
-        if (headers === undefined) {
-            return;
-        }
-        const results = await fetch("http://192.168.1.11:8080/api/file/upload", {
-            method: "POST",
-            headers: headers,
-            body: formData,
-        }).then((r) => r.json()).catch((err) => console.log(err));
+        formData.append("folderid", folderID_upload);
+        // let headers = getAuthorizationHeader();
+        // if (headers === undefined) {
+        //     return;
+        // }
+        const results = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/file/upload`,
+            {
+                method: "POST",
+                credentials: "include",
+                // headers: headers,
+                body: formData,
+            }
+        )
+            .then((r) => {
+                console.log("status", r.status);
+                return r.json();})
+            .catch((err) => console.log(err));
         console.log("results", results);
         setState(`Uploaded file ID ${results.files[0].id}`);
     }

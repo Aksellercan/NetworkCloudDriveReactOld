@@ -12,6 +12,9 @@ export function Navbar() {
             <Link to="/create/folder">
                 <button>Create Folder</button>
             </Link>
+            <Link to="/login">
+                <button>login</button>
+            </Link>
         </>
     );
 }
