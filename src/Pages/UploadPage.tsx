@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import logo from "../logo.svg";
-import { Link } from "react-router-dom";
 import "../App.css";
+import logo from '../logo.svg';
 
 export function UploadPage() {
     const [state, setState] = useState("ready to upload");
@@ -83,15 +82,11 @@ export function UploadPage() {
         if (headers === undefined) {
             return;
         }
-
-        const results = await fetch(
-            "http://192.168.1.11:8080/api/file/upload",
-            {
-                method: "POST",
-                headers: headers,
-                body: formData,
-            }
-        )
+        const results = await fetch("http://192.168.1.11:8080/api/file/upload", {
+            method: "POST",
+            headers: headers,
+            body: formData,
+        })
             .then((r) => r.json())
             .catch((err) => console.log(err));
         console.log("results", results);
