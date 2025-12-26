@@ -75,9 +75,9 @@ export function UploadPage() {
         }
         const formData = new FormData();
 
-        for (let i = 0; i < files.length; i++) {}
-        formData.append("folderid", folderID_upload);
-
+        for (let i = 0; i < files.length; i++) {
+            formData.append("folderid", folderID_upload);
+        }
         let headers = getAuthorizationHeader();
         if (headers === undefined) {
             return;
@@ -86,9 +86,7 @@ export function UploadPage() {
             method: "POST",
             headers: headers,
             body: formData,
-        })
-            .then((r) => r.json())
-            .catch((err) => console.log(err));
+        }).then((r) => r.json()).catch((err) => console.log(err));
         console.log("results", results);
         setState(`Uploaded file ID ${results.files[0].id}`);
     }
