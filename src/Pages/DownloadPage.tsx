@@ -1,3 +1,10 @@
+import { DownloadButton } from "../Components/DownloadButton";
+
 export function DownloadPage() {
-    return <h1>Download page</h1>;
+    return (
+        <div>
+            <h1>Download page</h1>
+            <DownloadButton/>
+        </div>
+    );
 }
