@@ -7,7 +7,7 @@ export function CreateFolder() {
     const [response, setResponse] = useState("not created yet");
 
     function handleFolderIdChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setFolderId(convertToNumber(e.currentTarget.value));
+        setFolderId(convertToNumber(e.currentTarget.value, 0));
     }
 
     function handleFolderNameChange(e: React.ChangeEvent<HTMLInputElement>) {

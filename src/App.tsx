@@ -4,6 +4,7 @@ import { DownloadPage } from "./Pages/DownloadPage";
 import { UploadPage } from "./Pages/UploadPage";
 import { Layout } from "./Layout";
 import { Login } from "./Pages/Login";
+import { List } from "./Pages/List";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                     <Route path="/create/folder" element={<CreateFolder />} />
                     <Route path="/download" element={<DownloadPage />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/list" element={<List />} />
                 </Route>
             </Routes>
         </Router>

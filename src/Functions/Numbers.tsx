@@ -1,7 +1,7 @@
-export function convertToNumber(x: String): number {
+export function convertToNumber(x: String, defaultValue: number): number {
     let y = Number(x);
     if (Number.isNaN(y)) {
-        return 1;
+        return defaultValue;
     }
     return y;
 }

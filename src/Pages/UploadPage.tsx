@@ -33,6 +33,7 @@ export function UploadPage() {
             formData.append("files", files[i]);
         }
         formData.append("folderid", folderID_upload);
+        setState("started uploading files...");
         const results = await fetch(
             `${process.env.REACT_APP_API_URL}/api/file/upload`,
             {
@@ -46,7 +47,15 @@ export function UploadPage() {
                 return r.json();})
             .catch((err) => console.log(err));
         console.log("results", results);
-        setState(`Uploaded file ID ${results.files[0].id}`);
+        let uploadedFilesId = "";
+        for (let i = 0; i < results.files.length; i++) {
+            if (i == results.files.length-1) {
+             uploadedFilesId += `${results.files[i].id}`
+             break;
+            }
+            uploadedFilesId += `${results.files[i].id}, `
+        }
+        setState(`Uploaded file ID ${uploadedFilesId}`);
     }
     return (
         <>
