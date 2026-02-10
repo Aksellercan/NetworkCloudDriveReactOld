@@ -9,7 +9,7 @@ export function FileList() {
         setFolderId(convertToNumber(e.currentTarget.value, 0));
     }
 
-    async function getFileListById(folderid: number) {
+    async function resetList(folderid: number) {
         setFolderId(folderid);
         const outer_div = document.getElementById("list-outer")!;
         outer_div.removeChild(outer_div.firstChild!);
@@ -37,7 +37,7 @@ export function FileList() {
 
         if (current_folderid !== 0) {
             const goBack = document.createElement("button");
-            goBack.onclick = () => { getFileListById(0) }
+            goBack.onclick = () => { resetList(0) }
             goBack.textContent = "go back to root"
             const breakLine = document.createElement("br");
             fileList.append(goBack);
@@ -51,8 +51,12 @@ export function FileList() {
         }
         for (let i = 0; i < response.files.length; i++) {
             const fileLink = document.createElement("button");
-            fileLink.onclick = () => { downloadFile(response.files[i].id) };
+            fileLink.onclick = () => { downloadFile(response.files[i].id) }
             const breakLine = document.createElement("br");
+            //add if check after making docker api return "hasThumbnail"
+            const thumbnailTest = document.createElement("img");
+            thumbnailTest.src = `${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileId=${response.files[i].id}`
+            fileList.append(thumbnailTest);
             fileLink.textContent = `File name: ${response.files[i].name} id: ${response.files[i].id}`
             fileList.append(fileLink);
             fileList.append(breakLine);
@@ -69,13 +73,19 @@ export function FileList() {
             folderLink.onclick = () => {
                 let value = response.folders[i].id;
                 console.log(`value is ${value}`);
-                getFileListById(value)
+                resetList(value)
             }
             const breakLine = document.createElement("br");
             folderLink.textContent = `Folder name: ${response.folders[i].name} id: ${response.folders[i].id}`
             folderList.append(folderLink);
             folderList.append(breakLine);
         }
+    }
+
+    function thumbnailElement(thumbnailFileId: number) {
+        return (<img
+            src={`${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileid=${thumbnailFileId}`}
+        ></img>)
     }
 
     return (<div>
@@ -85,7 +95,7 @@ export function FileList() {
             onChange={handleFolderIdChange}
             value={getfolderId}
         />
-        <button onClick={() => { getFileList(getfolderId) }}>get list {getfolderId}</button>
+        <button onClick={() => { resetList(getfolderId) }}>get list {getfolderId}</button>
         <div id="list-outer">
             <div id="fileList"></div>
             <div id="folderList"></div>
