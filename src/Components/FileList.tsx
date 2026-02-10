@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { convertToNumber } from "../Functions/Numbers";
 import { downloadFile } from "../Functions/DownloadFile";
+import no_thumbnail_file from "../Media/no_thumbnail_file.jpg"
+import { useEffect } from "react";
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
@@ -53,9 +55,12 @@ export function FileList() {
             const fileLink = document.createElement("button");
             fileLink.onclick = () => { downloadFile(response.files[i].id) }
             const breakLine = document.createElement("br");
-            //add if check after making docker api return "hasThumbnail"
             const thumbnailTest = document.createElement("img");
-            thumbnailTest.src = `${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileId=${response.files[i].id}`
+            if (response.files[i].hasThumbnail === true) {
+                thumbnailTest.src = `${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileId=${response.files[i].id}`
+            } else {
+                thumbnailTest.src = no_thumbnail_file;
+            }
             fileList.append(thumbnailTest);
             fileLink.textContent = `File name: ${response.files[i].name} id: ${response.files[i].id}`
             fileList.append(fileLink);
@@ -81,17 +86,15 @@ export function FileList() {
             folderList.append(breakLine);
         }
     }
-
-    function thumbnailElement(thumbnailFileId: number) {
-        return (<img
-            src={`${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileid=${thumbnailFileId}`}
-        ></img>)
-    }
+    useEffect(() => {
+        resetList(getfolderId)
+        console.log('i fire once');
+    }, []);
 
     return (<div>
         <input
             type="number"
-            min={1}
+            min={0}
             onChange={handleFolderIdChange}
             value={getfolderId}
         />
