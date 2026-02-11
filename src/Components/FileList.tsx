@@ -86,9 +86,13 @@ export function FileList() {
             folderList.append(breakLine);
         }
     }
+    let useEffectRunCount = 0;
     useEffect(() => {
+        useEffectRunCount++;
+        if (useEffectRunCount === 2) {
+            return;
+        }
         resetList(getfolderId)
-        console.log('i fire once');
     }, []);
 
     return (<div>
