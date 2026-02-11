@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { convertToNumber } from "../Functions/Numbers";
 import { downloadFile } from "../Functions/DownloadFile";
 import no_thumbnail_file from "../Media/no_thumbnail_file.jpg"
-import { useEffect } from "react";
+import { NavigationHistory } from "../Functions/NavigationHistory";
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
+    const navHistory: NavigationHistory = new NavigationHistory();
+    const ref = useRef(null);
 
     function handleFolderIdChange(e: React.ChangeEvent<HTMLInputElement>) {
         setFolderId(convertToNumber(e.currentTarget.value, 0));
@@ -13,6 +15,7 @@ export function FileList() {
 
     async function resetList(folderid: number) {
         setFolderId(folderid);
+        navHistory.pushToHistory(folderid);
         const outer_div = document.getElementById("list-outer")!;
         outer_div.removeChild(outer_div.firstChild!);
         outer_div.removeChild(outer_div.firstChild!);
@@ -26,14 +29,18 @@ export function FileList() {
         getFileList(folderid);
     }
 
-    async function getFileList(current_folderid: number) {
+    const fetchFileList = async (current_folderid: number) => {
         console.log(`folder id = ${getfolderId}`)
         const response = await fetch(
             `${process.env.REACT_APP_API_URL}/api/filesystem/list?folderid=${current_folderid}`, {
             method: "GET",
             credentials: "include"
         }).then((r) => { return r.json(); }).catch((e) => { console.error(e); });
-
+        return response;
+    }
+    
+    async function getFileList(current_folderid: number) {
+        const response = await fetchFileList(current_folderid);
         const fileList = document.getElementById("fileList")!;
         const folderList = document.getElementById("folderList")!;
 
@@ -88,7 +95,6 @@ export function FileList() {
     }
     useEffect(() => {
         resetList(getfolderId)
-        console.log('i fire once');
     }, []);
 
     return (<div>
