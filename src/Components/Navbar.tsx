@@ -1,21 +1,17 @@
 import { Link } from "react-router-dom";
 
 export function Navbar() {
+
+    async function logout() {
+        const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/logout`, {
+            method: "GET",
+            credentials: "include"
+        }).then((r) => {
+            console.log("Status code", r.status);
+            return r.json(); }).catch((e) => { console.error(e); });
+    }
     return (
-        // <>
-        //     <Link to="/">
-        //         <button>Upload</button>
-        //     </Link>
-        //     <Link to="/download">
-        //         <button>Download</button>
-        //     </Link>
-        //     <Link to="/create/folder">
-        //         <button>Create Folder</button>
-        //     </Link>
-        //     <Link to="/login">
-        //         <button>login</button>
-        //     </Link>
-        // </>
         <nav className="z-50 bg-white">
             <div className="h-10vh flex items-center px-20 py-20 border-b">
                 <div className="flex items-center flex-1">
@@ -26,7 +22,7 @@ export function Navbar() {
                 <div>
                     <ul className="flex items-center justify-between space-x-6 text-[18px]">
                         <li>
-                            <Link to="/">Home</Link>
+                            <Link to="/upload">Home</Link>
                         </li>
                         <li>
                             <Link to="/download">Download</Link>
@@ -39,7 +35,13 @@ export function Navbar() {
                             <Link to="/login">Login</Link>
                         </li>
                         <li>
-                            <Link to="/list">File List</Link>
+                            <Link to="/register">Register</Link>
+                        </li>
+                        <li>
+                            <Link to="/">File List</Link>
+                        </li>
+                        <li>
+                            <Link to="/logout" onClick={logout}>Logout</Link>
                         </li>
                     </ul>
                 </div>
