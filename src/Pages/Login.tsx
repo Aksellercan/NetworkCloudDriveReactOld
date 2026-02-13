@@ -1,9 +1,5 @@
-import React, {
-    EventHandler,
-    ReactEventHandler,
-    SetStateAction,
-    useState,
-} from "react";
+import { useState } from "react";
+import React from "react";
 
 export function Login() {
     const [mail, setMail] = useState("");
@@ -47,7 +43,7 @@ export function Login() {
             body: new URLSearchParams({
                 username: mail,
                 password: password,
-                remember_me: remember_me
+                "remember-me": remember_me
             }),
             credentials: "include",
         })
