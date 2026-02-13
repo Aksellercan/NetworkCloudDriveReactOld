@@ -1,4 +1,4 @@
-import {
+import React, {
     EventHandler,
     ReactEventHandler,
     SetStateAction,
@@ -7,6 +7,7 @@ import {
 
 export function Login() {
     const [mail, setMail] = useState("");
+    const [remember_me, setRemember_me] = useState("");
     const [password, setPassword] = useState("");
     const [userState, setUserState] = useState("not logged in");
 
@@ -16,6 +17,10 @@ export function Login() {
 
     function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
         setPassword(e.currentTarget.value);
+    }
+
+    function handleRememberMe(e: React.ChangeEvent<HTMLInputElement>) {
+        setRemember_me(e.currentTarget.value);
     }
 
     async function checkConnection() {
@@ -35,13 +40,14 @@ export function Login() {
     }
 
     async function loginForm() {
-        console.log(`username ${mail} password ${password}`);
+        console.log(`username ${mail} password ${password} remember me ${remember_me}`);
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
             method: "POST",
             body: new URLSearchParams({
                 username: mail,
                 password: password,
+                remember_me: remember_me
             }),
             credentials: "include",
         })
@@ -82,6 +88,10 @@ export function Login() {
                         onChange={handlePasswordChange}
                         required
                     />
+                </label>
+                <label>
+                    Remember me on this computer.
+                    <input type="checkbox" name="remember-me" onChange={handleRememberMe}/> 
                 </label>
             </form>
             <button onClick={loginForm}>submit</button>

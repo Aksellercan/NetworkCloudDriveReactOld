@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { convertToNumber } from "../Functions/Numbers";
 import { downloadFile } from "../Functions/DownloadFile";
 import no_thumbnail_file from "../Media/no_thumbnail_file.jpg"
-import { NavigationHistory } from "../Functions/NavigationHistory";
+// import { NavigationHistory } from "../Functions/NavigationHistory";
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
-    const navHistory: NavigationHistory = new NavigationHistory();
+    // const navHistory: NavigationHistory = new NavigationHistory();
     const ref = useRef(null);
 
     function handleFolderIdChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -15,7 +15,7 @@ export function FileList() {
 
     async function resetList(folderid: number) {
         setFolderId(folderid);
-        navHistory.pushToHistory(folderid);
+        // navHistory.pushToHistory(folderid);
         const outer_div = document.getElementById("list-outer")!;
         outer_div.removeChild(outer_div.firstChild!);
         outer_div.removeChild(outer_div.firstChild!);
