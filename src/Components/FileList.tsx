@@ -110,7 +110,7 @@ export function FileList() {
             value={getfolderId}
         />
         <button onClick={() => { resetList(getfolderId) }}>get list {getfolderId}</button>
-        <div id="list-outer">
+        <div id="list-outer" className="flex items-center justify-between space-x-6 text-[18px]">
             <div id="fileList"></div>
             <div id="folderList"></div>
         </div>
