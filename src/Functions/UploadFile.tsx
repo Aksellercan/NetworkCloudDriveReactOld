@@ -1,7 +1,7 @@
 export async function UploadFile(files: FileList, folderID_upload: number): Promise<any> {
     if (typeof files === "undefined") {
         console.error("No file uploaded");
-        return [] as string[];
+        return [];
     }
     console.log("FORM DATA");
     const formData = new FormData();
@@ -24,6 +24,6 @@ export async function UploadFile(files: FileList, folderID_upload: number): Prom
         })
         .catch((err) => {
             console.log(err);
-            return [] as string[];
+            return [];
         });
 }

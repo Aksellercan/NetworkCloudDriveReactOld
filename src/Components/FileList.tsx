@@ -100,7 +100,7 @@ export function FileList() {
             return;
         }
         resetList(getfolderId)
-    });
+    }, []); // Without [] list is printed twice I dont know why...
 
     return (<div>
         <UploadButton currentFolderId={getfolderId}/>

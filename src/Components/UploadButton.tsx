@@ -18,15 +18,23 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
     }
 
     async function handleFileUpload() {
-        if (files === undefined) {    
+        if (files === undefined) {
             return
         }
-        const results: string[] = await UploadFile(files!, currentFolderId);
+        const results = await UploadFile(files!, currentFolderId);
         if (results.length === 0) {
             setState("Failed to upload files");
             return;
         }
-        setState("Uploaded files");
+        let uploadedFilesId = "";
+        for (let i = 0; i < results.files.length; i++) {
+            if (i == results.files.length - 1) {
+                uploadedFilesId += `${results.files[i].id}`
+                break;
+            }
+            uploadedFilesId += `${results.files[i].id}, `
+        }
+        setState(`Uploaded: ${uploadedFilesId}`);
     }
 
     return (
