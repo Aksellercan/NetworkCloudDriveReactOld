@@ -22,7 +22,7 @@ export function DownloadButton() {
                 onChange={handleFileIdChange}
                 value={fileId}
             />
-            <button onClick={DownloadFile}>download file {fileId}</button>
+            <button onClick={DownloadFile}>Download file {fileId}</button>
         </div>
     );
 }

@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { convertToNumber } from "../Functions/Numbers";
 import { downloadFile } from "../Functions/DownloadFile";
 import no_thumbnail_file from "../Media/no_thumbnail_file.jpg"
 // import { NavigationHistory } from "../Functions/NavigationHistory";
+import { UploadButton } from "./UploadButton";
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
     // const navHistory: NavigationHistory = new NavigationHistory();
-    const ref = useRef(null);
 
     function handleFolderIdChange(e: React.ChangeEvent<HTMLInputElement>) {
         setFolderId(convertToNumber(e.currentTarget.value, 0));
@@ -100,9 +100,10 @@ export function FileList() {
             return;
         }
         resetList(getfolderId)
-    }, []);
+    });
 
     return (<div>
+        <UploadButton currentFolderId={getfolderId}/>
         <input
             type="number"
             min={0}
