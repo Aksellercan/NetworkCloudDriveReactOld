@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { UploadFile } from "../Functions/UploadFile";
+import "../Styles/upload.css"
 
 type UploadButtonProps = {
     currentFolderId: number
@@ -40,7 +41,7 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
     }
 
     return (
-        <div>
+        <div className="uploadButtonDiv">
             <p>{state}</p>
             <input ref={fileInputRef} onChange={handleOnChange} type="file" multiple id="fileInput"/>
             <button onClick={handleFileUpload}>Upload file to {currentFolderId}</button>

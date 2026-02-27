@@ -1,0 +1,10 @@
+.uploadButtonDiv {
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.uploadButtonDiv>button {
+    width: 15%;
+    padding: 2px;
+}
