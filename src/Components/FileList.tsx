@@ -124,7 +124,7 @@ export function FileList() {
         useEffectRunCount++;
     }, []);
 
-    return (<div>
+    return (<div style={{ display: "flex", flexDirection: "column" }}>
         <UploadButton currentFolderId={getfolderId} />
         <div id="navigationDiv"></div>
         <div id="list-outer" className="fileListDiv">
