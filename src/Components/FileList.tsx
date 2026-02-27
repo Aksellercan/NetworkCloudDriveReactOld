@@ -9,6 +9,7 @@ import "../Styles/filelist.css"
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
     const navigationHistory: number[] = [0]
+    const [currentFolderName, setCurrentFolderName] = useState("");
 
     function appendToHistory(folderid: number) {
         if (folderid === 0) {
@@ -52,6 +53,15 @@ export function FileList() {
         }
     }
 
+    const fetchFileInfo = async (current_folderid: number) => {
+        const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/info/get/foldermetadata?folderid=${current_folderid}`, {
+            method: "GET",
+            credentials: "include"
+        }).then((r) => { return r.json(); }).catch((e) => { console.error(e); });
+        return response;
+    }
+
     const fetchFileList = async (current_folderid: number) => {
         const response = await fetch(
             `${process.env.REACT_APP_API_URL}/api/filesystem/list?folderid=${current_folderid}`, {
@@ -63,7 +73,9 @@ export function FileList() {
 
     async function getFileList(current_folderid: number) {
         const response = await fetchFileList(current_folderid);
+        const infoResponse = await fetchFileInfo(current_folderid);
         const fileList = document.getElementById("fileList")!;
+        setCurrentFolderName(infoResponse.name);
 
         if (current_folderid !== 0) {
             const test = document.getElementById("navigationDiv")!;
@@ -126,6 +138,7 @@ export function FileList() {
 
     return (<div style={{ display: "flex", flexDirection: "column" }}>
         <UploadButton currentFolderId={getfolderId} />
+        <p>{currentFolderName}</p>
         <div id="navigationDiv"></div>
         <div id="list-outer" className="fileListDiv">
             <div id="fileList" className="fileDiv"></div>
