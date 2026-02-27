@@ -1,12 +1,13 @@
 import { useState } from "react";
 import React from "react";
 import { FetchUserDetails } from "../Functions/FetchUserDetails";
+import "../Styles/login.css"
 
 export function Login() {
     const [mail, setMail] = useState("");
     const [remember_me, setRemember_me] = useState("");
     const [password, setPassword] = useState("");
-    const [userState, setUserState] = useState("not logged in");
+    const [userState, setUserState] = useState("");
 
     function handleMailChange(e: React.ChangeEvent<HTMLInputElement>) {
         setMail(e.currentTarget.value);
@@ -18,22 +19,6 @@ export function Login() {
 
     function handleRememberMe(e: React.ChangeEvent<HTMLInputElement>) {
         setRemember_me(e.currentTarget.value);
-    }
-
-    async function checkConnection() {
-        const results = await fetch(
-            `${process.env.REACT_APP_API_URL}/api/user/info`,
-            {
-                method: "GET",
-                credentials: "include",
-            }
-        )
-            .then((r) => r.json())
-            .catch((err) => console.log(err));
-        console.log("results", results);
-        setUserState(
-            `user name: ${results.object.name} mail: ${results.object.mail}`
-        );
     }
 
     const login = async () => {
@@ -50,48 +35,57 @@ export function Login() {
                 if (res.ok) {
                     console.log("logged in");
                 } else {
+                    setUserState("Invalid credentials");
                     console.log("failed to login");
                     return;
                 }
             })
             .catch((e) => console.error(e));
-            FetchUserDetails();
-            checkConnection();
+        await FetchUserDetails();
+        window.location.reload();
     }
 
     return (
-        <div>
-            <h1>Login</h1>
-            <form>
-                <label>
-                    User Mail
-                    <input
-                        type="email"
-                        id="username_input"
-                        name="username"
-                        value={mail}
-                        onChange={handleMailChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Password
-                    <input
-                        type="password"
-                        id="password_input"
-                        name="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Remember me on this computer.
-                    <input type="checkbox" name="remember-me" onChange={handleRememberMe}/> 
-                </label>
-            </form>
-            <button onClick={login}>submit</button>
-            <p>{userState}</p>
-        </div>
+        <>
+            <div className="formDiv">
+                <div>
+                    <form className="loginForm">
+                        <h1>Login</h1>
+                        <div className="inputDiv">
+                            <input
+                                type="email"
+                                id="username_input"
+                                name="username"
+                                value={mail}
+                                placeholder="User Mail"
+                                onChange={handleMailChange}
+                                required
+                            />
+                        </div>
+                        <div className="inputDiv">
+                            <input
+                                type="password"
+                                id="password_input"
+                                name="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label>
+                                Remember me on this computer:
+                                <input type="checkbox" name="remember-me" onChange={handleRememberMe} />
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div className="submitDiv">
+                    <button onClick={login}>submit</button>
+                    <p>{userState}</p>
+                </div>
+            </div>
+        </>
     );
 }

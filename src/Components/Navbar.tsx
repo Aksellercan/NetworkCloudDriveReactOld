@@ -21,7 +21,8 @@ export function Navbar() {
             console.log("Status code", r.status);
             return r.json();
         }).catch((e) => { console.error(e); });
-       localStorage.clear(); 
+        localStorage.removeItem("user"); 
+        window.location.reload();
     }
 
     return (
@@ -40,12 +41,6 @@ export function Navbar() {
                     <ul>
                         <li>
                             <NavLink to="/">File List</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/upload">Upload</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/download">Download</NavLink>
                         </li>
                         <li>
                             <NavLink to="/create/folder">Create Folder</NavLink>

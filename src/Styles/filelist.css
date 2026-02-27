@@ -1,0 +1,22 @@
+.fileDiv, .folderDiv {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.fileDiv>div, .folderDiv>div {
+    width: 200px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.folder, .file {
+    display: flex;
+    flex-direction: column;
+}
+
+.file:hover, .folder:hover {
+    background: linear-gradient(to bottom, #5972a7 5%, #637aad 100%);
+    background-color: #5972a7;
+}

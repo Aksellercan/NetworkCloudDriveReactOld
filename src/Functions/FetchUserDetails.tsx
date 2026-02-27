@@ -1,4 +1,4 @@
-export async function FetchUserDetails(): Promise<string> {
+export async function FetchUserDetails() {
     const results = await fetch(
         `${process.env.REACT_APP_API_URL}/api/user/info`,
         {
@@ -8,6 +8,9 @@ export async function FetchUserDetails(): Promise<string> {
     )
         .then((r) => r.json())
         .catch((err) => console.log(err));
-    const user = localStorage.setItem("user", results.object.name)!;
-    return user
+    if (results === undefined) {
+        localStorage.removeItem("user");
+        return;
+    }
+    localStorage.setItem("user", results.object.name);
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { UploadFile } from "../Functions/UploadFile";
 
 type UploadButtonProps = {
@@ -7,7 +7,8 @@ type UploadButtonProps = {
 
 export function UploadButton({ currentFolderId }: UploadButtonProps) {
     const [files, setFile] = useState<FileList | undefined>();
-    const [state, setState] = useState("ready to upload");
+    const [state, setState] = useState("Upload Files");
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
         const target = e.target as HTMLInputElement & {
@@ -28,19 +29,20 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
         }
         let uploadedFilesId = "";
         for (let i = 0; i < results.files.length; i++) {
-            if (i == results.files.length - 1) {
+            if (i === results.files.length - 1) {
                 uploadedFilesId += `${results.files[i].id}`
                 break;
             }
             uploadedFilesId += `${results.files[i].id}, `
         }
-        setState(`Uploaded: ${uploadedFilesId}`);
+        setState(`Uploaded ${uploadedFilesId}`);
+        fileInputRef.current!.value = '';
     }
 
     return (
         <div>
-            <p>Upload state: {state}</p>
-            <input onChange={handleOnChange} type="file" multiple />
+            <p>{state}</p>
+            <input ref={fileInputRef} onChange={handleOnChange} type="file" multiple id="fileInput"/>
             <button onClick={handleFileUpload}>Upload file to {currentFolderId}</button>
         </div>
     );

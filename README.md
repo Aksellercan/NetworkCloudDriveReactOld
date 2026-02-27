@@ -12,5 +12,3 @@ Very basic frontend for NetworkCloudDrive API
 ## Incase of NPM issues
 - Remove node modules `rm -rf node_modules`
 - Reinstall them again `npm install`
-
-*Probably won't be getting any UI enhancements anymore*
