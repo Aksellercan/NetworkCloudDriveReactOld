@@ -1,6 +1,16 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import "../Styles/navbar.css"
+import { useState } from "react";
+import { ReactComponent as Brand } from "../logo.svg"
+import { DarkModeHandler } from "../Functions/DarkModeHandler";
+import { ReturnUsername } from "../Functions/ReturnUsername";
 
 export function Navbar() {
+    const [showNav, setShowNav] = useState(false)
+
+    const toggleNavItems = () => {
+        setShowNav(!showNav)
+    }
 
     const logout = async () => {
         await fetch(
@@ -9,25 +19,53 @@ export function Navbar() {
             credentials: "include"
         }).then((r) => {
             console.log("Status code", r.status);
-            return r.json(); }).catch((e) => { console.error(e); });
+            return r.json();
+        }).catch((e) => { console.error(e); });
+       localStorage.clear(); 
     }
 
     return (
-        <nav className="z-50 bg-white">
-            <div className="h-10vh flex items-center px-20 py-20 border-b">
-                <div className="flex items-center justify-between space-x-6 text-[18px]">
-                    <div className="flex items-center flex-1">
-                        <h2 className="text-3xl font-bold text-pink-500 ">
-                            NetworkCloudDrive
-                        </h2>
-                    </div>
-                        <Link to="/upload">Upload</Link>
-                        <Link to="/download">Download</Link>
-                        <Link to="/create/folder">Create Folder</Link>
-                        <Link to="/login">Login</Link>
-                        <Link to="/register">Register</Link>
-                        <Link to="/">File List</Link>
-                        <Link to="/logout" onClick={logout}>Logout</Link>
+        <nav className="navbar">
+            <div className="container">
+                <div className="logo">
+                    <Brand />
+                </div>
+                <div>
+                    <p className="pName">NetworkCloudDrive</p>
+                </div>
+                <div className="menu-icon" onClick={toggleNavItems}>
+                    <p>Menu</p>
+                </div>
+                <div className={`nav-elements  ${showNav && 'active'}`}>
+                    <ul>
+                        <li>
+                            <NavLink to="/">File List</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/upload">Upload</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/download">Download</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/create/folder">Create Folder</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/login">Login</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/register">Register</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/logout" onClick={logout}>Logout</NavLink>
+                        </li>
+                        <li>
+                            <DarkModeHandler />
+                        </li>
+                        <li>
+                            <ReturnUsername />
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>

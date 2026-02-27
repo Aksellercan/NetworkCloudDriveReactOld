@@ -4,6 +4,7 @@ import { downloadFile } from "../Functions/DownloadFile";
 import no_thumbnail_file from "../Media/no_thumbnail_file.jpg"
 // import { NavigationHistory } from "../Functions/NavigationHistory";
 import { UploadButton } from "./UploadButton";
+import "../Styles/content.css"
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);

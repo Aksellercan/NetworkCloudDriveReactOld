@@ -1,0 +1,36 @@
+body {
+    /* Variables */
+    --background-color: #42414D;
+    --text-color: white;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #2e2e2e;
+}
+
+[data-theme="light"] {
+    --background-color: white;
+    --text-color: black;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    border-color: aquamarine;
+    border-radius: 5%;
+    overflow-wrap: anywhere;
+    background-color: black;
+    color: aliceblue;
+}
+
+Button:hover {
+    background: linear-gradient(to bottom, #5972a7 5%, #637aad 100%);
+    background-color: #5972a7;
+}
+
+p,
+h1 {
+    color: var(--text-color);
+}

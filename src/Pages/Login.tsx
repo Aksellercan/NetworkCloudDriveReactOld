@@ -1,5 +1,6 @@
 import { useState } from "react";
 import React from "react";
+import { FetchUserDetails } from "../Functions/FetchUserDetails";
 
 export function Login() {
     const [mail, setMail] = useState("");
@@ -35,10 +36,8 @@ export function Login() {
         );
     }
 
-    async function loginForm() {
-        console.log(`username ${mail} password ${password} remember me ${remember_me}`);
-
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+    const login = async () => {
+        await fetch(`${process.env.REACT_APP_API_URL}/login`, {
             method: "POST",
             body: new URLSearchParams({
                 username: mail,
@@ -56,7 +55,8 @@ export function Login() {
                 }
             })
             .catch((e) => console.error(e));
-        checkConnection();
+            FetchUserDetails();
+            checkConnection();
     }
 
     return (
@@ -90,7 +90,7 @@ export function Login() {
                     <input type="checkbox" name="remember-me" onChange={handleRememberMe}/> 
                 </label>
             </form>
-            <button onClick={loginForm}>submit</button>
+            <button onClick={login}>submit</button>
             <p>{userState}</p>
         </div>
     );
