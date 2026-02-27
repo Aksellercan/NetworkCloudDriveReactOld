@@ -4,11 +4,17 @@
     gap: 16px;
 }
 
-.fileDiv>div, .folderDiv>div {
-    width: 200px;
+.fileDiv>div {
+    width: 150px;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 8px;
+}
+
+@media only screen and (max-width: 500px) {
+    .fileDiv>div {
+        width: 95px;
+    }
 }
 
 .folder, .file {
