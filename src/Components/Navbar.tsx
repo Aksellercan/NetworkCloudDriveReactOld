@@ -28,11 +28,8 @@ export function Navbar() {
     return (
         <nav className="navbar">
             <div className="container">
-                <div className="logo">
-                    <Brand />
-                </div>
-                <div>
-                    <p className="pName">NetworkCloudDrive</p>
+                <div className="brand">
+                    <p>NetworkCloudDrive</p>
                 </div>
                 <div className="menu-icon" onClick={toggleNavItems}>
                     <p>Menu</p>

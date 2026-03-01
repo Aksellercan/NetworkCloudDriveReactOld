@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 .container {
-  max-width: 1100px;
   margin: 0 auto;
   padding: 0 15px;
   display: flex;
@@ -16,7 +15,7 @@
   position: relative;
 }
 
-.pName {
+.brand {
   font-weight: bolder;
 }
 
@@ -69,7 +68,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 840px) {
   .menu-icon {
     display: block;
     cursor: pointer;
