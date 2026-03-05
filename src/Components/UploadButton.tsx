@@ -23,6 +23,7 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
         if (files === undefined) {
             return
         }
+        setState("Uploading files...");
         const results = await UploadFile(files!, currentFolderId);
         if (results.length === 0) {
             setState("Failed to upload files");

@@ -18,8 +18,20 @@
 }
 
 .folder, .file {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     display: flex;
+    max-height: max-content;
     flex-direction: column;
+    font-size: small;
+}
+
+.file>img, .folder>img {
+    width: 100%;
+    height: 100%;
+    max-width: 250px;
+    max-height: 150px;
 }
 
 .file:hover, .folder:hover {
