@@ -4,6 +4,7 @@ import no_thumbnail_file from "../Media/file.png"
 import folderIcon from "../Media/folder.png"
 import { UploadButton } from "./UploadButton";
 import "../Styles/filelist.css"
+import { CreateFolder } from "../Functions/CreateFolder";
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
@@ -73,7 +74,7 @@ export function FileList() {
     }
 
     async function getFileList(current_folderid: number) {
-        const response = await fetchFileList(current_folderid);
+        let response = await fetchFileList(current_folderid);
         const infoResponse = await fetchFileInfo(current_folderid);
         const fileList = document.getElementById("fileList")!;
         setCurrentFolderName(infoResponse.name);
@@ -86,8 +87,8 @@ export function FileList() {
             test.append(goBackFunc);
         }
 
-
-        for (let i = 0; i < response.folders.length; i++) {
+        response.folders.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name));
+        for (let i: number = 0; i < response.folders.length; i++) {
             const folderDiv = document.createElement("div");
             folderDiv.className = "folder";
             const folderLink = document.createElement("p");
@@ -104,7 +105,8 @@ export function FileList() {
             fileList.append(folderDiv);
         }
 
-        for (let i = 0; i < response.files.length; i++) {
+        response.files.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name));
+        for (let i: number = 0; i < response.files.length; i++) {
             const fileDiv = document.createElement("div");
             fileDiv.className = "file";
             const fileLink = document.createElement("p");
@@ -134,6 +136,7 @@ export function FileList() {
 
     return (<div style={{ display: "flex", flexDirection: "column" }}>
         <h1>{currentFolderName}</h1>
+        <CreateFolder currentFolderId={getfolderId}/>
         <UploadButton currentFolderId={getfolderId} />
         <div id="navigationDiv"></div>
         <div id="list-outer" className="fileListDiv">

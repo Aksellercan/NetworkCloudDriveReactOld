@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { convertToNumber } from "../Functions/Numbers";
 
-export function CreateFolder() {
+export function CreateFolderPage() {
     const [folderId, setFolderId] = useState(0);
     const [folderName, setFolderName] = useState("");
     const [response, setResponse] = useState("not created yet");

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Register } from "./Pages/Register"
-import { CreateFolder } from "./Pages/CreateFolder";
+import { CreateFolderPage } from "./Pages/CreateFolderPage";
 import { DownloadPage } from "./Pages/DownloadPage";
 import { UploadPage } from "./Pages/UploadPage";
 import { Layout } from "./Layout";
@@ -13,7 +13,7 @@ function App() {
             <Routes>
                 <Route element={<Layout />}>
                     <Route path="/" element={<List />} />
-                    <Route path="/create/folder" element={<CreateFolder />} />
+                    <Route path="/create/folder" element={<CreateFolderPage />} />
                     <Route path="/download" element={<DownloadPage />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/upload" element={<UploadPage />} />
