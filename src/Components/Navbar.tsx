@@ -40,9 +40,6 @@ export function Navbar() {
                             <NavLink to="/">File List</NavLink>
                         </li>
                         <li>
-                            <NavLink to="/create/folder">Create Folder</NavLink>
-                        </li>
-                        <li>
                             <NavLink to="/login">Login</NavLink>
                         </li>
                         <li>

@@ -6,14 +6,18 @@ type CreateFolderCurrentFolderProps = {
 
 export function CreateFolder({ currentFolderId }: CreateFolderCurrentFolderProps ) {
     const [folderName, setFolderName] = useState("");
-    const [response, setResponse] = useState("not created yet");
-    const folderInput = useRef(null);
+    const [response, setResponse] = useState("");
+    const folderInput = useRef<HTMLInputElement>(null);
 
     function handleFolderNameChange(e: React.ChangeEvent<HTMLInputElement>) {
         setFolderName(e.currentTarget.value);
     }
 
     async function handleSubmition() {
+        if (folderInput.current!.value === "") {
+            folderInput.current!.focus();
+            return;
+        }
         const bodyJson = { folder_id: currentFolderId, name: folderName };
         const response = await fetch(
             `${process.env.REACT_APP_API_URL}/api/file/create/folder`,
@@ -30,6 +34,7 @@ export function CreateFolder({ currentFolderId }: CreateFolderCurrentFolderProps
             .catch((e) => console.error(e));
 
         setResponse(`Created: ID ${response.id} Name ${response.name}`);
+        setFolderName("");
     }
 
     return (
@@ -39,9 +44,9 @@ export function CreateFolder({ currentFolderId }: CreateFolderCurrentFolderProps
                 onChange={handleFolderNameChange}
                 value={folderName}
                 ref={folderInput}
+                placeholder="folder name..."
             />
             <button onClick={handleSubmition}>Submit</button>
-            <p>Folder Name: {folderName}</p>
             <p>{response}</p>
         </div>
     );

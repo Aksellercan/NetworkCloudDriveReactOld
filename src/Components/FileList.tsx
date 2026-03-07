@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { downloadFile } from "../Functions/DownloadFile";
 import no_thumbnail_file from "../Media/file.png"
 import folderIcon from "../Media/folder.png"
@@ -8,11 +8,9 @@ import { CreateFolder } from "../Functions/CreateFolder";
 
 export function FileList() {
     const [getfolderId, setFolderId] = useState(0);
-    const navigationHistory: number[] = [0]
+    const navigationHistory: number[] = checkSessionStorageNavigationHistory();
     const [currentFolderName, setCurrentFolderName] = useState("");
-    const fileListRef = useRef(null);
-    const [currentPath, setCurrentPath] = useState(currentFolderName);
-
+   
     function appendToHistory(folderid: number) {
         if (folderid === 0) {
             navigationHistory.length = 0;
@@ -26,9 +24,29 @@ export function FileList() {
         }
     }
 
+    function checkSessionStorageNavigationHistory():number[] {
+        if (sessionStorage.getItem("file_list") === null) {
+            return [0];
+        }
+        return JSON.parse(sessionStorage.getItem("file_list")!).navigation_history;
+    }
+
+    function checkSessionStorage(): number {
+        if (sessionStorage.getItem("file_list") === null) {
+            return 0;
+        }
+        const jsonParse = JSON.parse(sessionStorage.getItem("file_list")!);
+        return jsonParse.current_folder;
+    }
+
+    function updateSessionStorage(currentFolder: number, currentNavigationHistory: number[]) {
+        sessionStorage.setItem("file_list", JSON.stringify({ "current_folder": currentFolder, "navigation_history": currentNavigationHistory }));
+    }
+
     async function goBack(current_folderid: number) {
-        resetList(navigationHistory[navigationHistory.length - 2]);
         navigationHistory.splice(navigationHistory.indexOf(current_folderid), 1);
+        resetList(navigationHistory[navigationHistory.length - 1]);
+        updateSessionStorage(navigationHistory[navigationHistory.length-1], navigationHistory);
     }
 
     async function resetList(folderid: number) {
@@ -77,7 +95,7 @@ export function FileList() {
         let response = await fetchFileList(current_folderid);
         const infoResponse = await fetchFileInfo(current_folderid);
         const fileList = document.getElementById("fileList")!;
-        setCurrentFolderName(infoResponse.name);
+        setCurrentFolderName(`${infoResponse.name} :ID ${infoResponse.id}`);
 
         if (current_folderid !== 0) {
             const test = document.getElementById("navigationDiv")!;
@@ -96,6 +114,7 @@ export function FileList() {
             folderDiv.onclick = () => {
                 let value = response.folders[i].id;
                 appendToHistory(value);
+                updateSessionStorage(value, navigationHistory);
                 resetList(value)
             }
             thumbnailTest.src = folderIcon;
@@ -125,22 +144,25 @@ export function FileList() {
             fileList.append(fileDiv);
         }
     }
+
     let useEffectRunCount = 0;
     useEffect(() => {
         if (useEffectRunCount >= 1) {
             return;
         }
-        resetList(getfolderId)
+        resetList(checkSessionStorage())
         useEffectRunCount++;
     }, []);
 
     return (<div style={{ display: "flex", flexDirection: "column" }}>
         <h1>{currentFolderName}</h1>
-        <CreateFolder currentFolderId={getfolderId}/>
-        <UploadButton currentFolderId={getfolderId} />
+        <div>
+            <CreateFolder currentFolderId={getfolderId} />
+            <UploadButton currentFolderId={getfolderId} />
+        </div>
         <div id="navigationDiv"></div>
         <div id="list-outer" className="fileListDiv">
-            <div ref={fileListRef} id="fileList" className="fileDiv"></div>
+            <div id="fileList" className="fileDiv"></div>
         </div>
     </div>);
 }

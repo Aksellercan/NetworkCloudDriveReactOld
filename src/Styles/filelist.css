@@ -6,40 +6,58 @@
     padding: 15px;
 }
 
-.folderDiv>div, .fileDiv>div {
-    width: 150px;
-    height: 200px;
+.folderDiv>div,
+.fileDiv>div {
+    width: 120px;
+    height: 180px;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 16px;
     border-radius: 8px;
 }
 
-@media only screen and (max-width: 500px) {
-    .fileDiv>div, .folderDiv>div {
-        width: 95px;
+@media only screen and (max-width: 391px) {
+    .fileDiv>div,
+    .folderDiv>div {
+        width: 97px;
+        height: 150px;
+        padding: 8px;
+    }
+
+    .fileDiv,
+    .folderDiv {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .file>img,
+    .folder>img {
+        width: 100%;
+        height: 100%;
     }
 }
 
-.folder,
-.file {
+.file,
+.folder {
     display: flex;
-    max-height: max-content;
     flex-direction: column;
-    font-size: small;
-}
-
-.file>p, .folder>div {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;    
+    align-items: center;
 }
 
 .file>img,
 .folder>img {
     width: 100%;
-    height: 100%;
-    max-width: 250px;
-    max-height: 150px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.file>p,
+.folder>p {
+    width: 100%;
+    font-size: small;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .file:hover,

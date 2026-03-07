@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import { Register } from "./Pages/Register"
 import { CreateFolderPage } from "./Pages/CreateFolderPage";
 import { DownloadPage } from "./Pages/DownloadPage";
@@ -6,8 +6,20 @@ import { UploadPage } from "./Pages/UploadPage";
 import { Layout } from "./Layout";
 import { Login } from "./Pages/Login";
 import { List } from "./Pages/List";
+import { useEffect } from "react";
+import { FetchUserDetails } from "./Functions/FetchUserDetails";
 
 function App() {
+    let useEffectRunCount = 0;
+    useEffect(() => {
+        if (useEffectRunCount >= 1) {
+            return;
+        }
+        FetchUserDetails();
+        console.debug("check if user is authenticated still...")
+        useEffectRunCount++;
+    });
+
     return (
         <Router>
             <Routes>
