@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "../Styles/navbar.css"
 import { useState } from "react";
-import { ReactComponent as Brand } from "../logo.svg"
 import { DarkModeHandler } from "../Functions/DarkModeHandler";
 import { ReturnUsername } from "../Functions/ReturnUsername";
 

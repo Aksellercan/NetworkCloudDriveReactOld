@@ -7,7 +7,7 @@ import "../Styles/filelist.css"
 import { CreateFolder } from "../Functions/CreateFolder";
 
 export function FileList() {
-    const [getfolderId, setFolderId] = useState(0);
+    const [getfolderId, setFolderId] = useState(checkSessionStorageFolderID());
     const navigationHistory: number[] = checkSessionStorageNavigationHistory();
     const [currentFolderName, setCurrentFolderName] = useState("");
     const [getSortType, setSortType] = useState(checkSessionStorageSorting());
@@ -44,7 +44,7 @@ export function FileList() {
         return JSON.parse(sessionStorage.getItem("file_list")!).navigation_history;
     }
 
-    function checkSessionStorage(): number {
+    function checkSessionStorageFolderID(): number {
         if (sessionStorage.getItem("file_list") === null) {
             return 0;
         }
@@ -65,12 +65,11 @@ export function FileList() {
 
     async function goBack(current_folderid: number) {
         navigationHistory.splice(navigationHistory.indexOf(current_folderid), 1);
-        reloadList(navigationHistory[navigationHistory.length - 1]);
+        setFolderId(navigationHistory[navigationHistory.length - 1]);
         updateSessionStorage(navigationHistory[navigationHistory.length - 1], navigationHistory);
     }
 
     async function reloadList(folderid: number) {
-        setFolderId(folderid);
         const outer_div = document.getElementById("list-outer")!;
         outer_div.removeChild(outer_div.firstChild!);
         const fileList = document.createElement("div");
@@ -133,9 +132,9 @@ export function FileList() {
             const thumbnailTest = document.createElement("img");
             folderDiv.onclick = () => {
                 let value = response.folders[i].id;
+                setFolderId(value);
                 appendToHistory(value);
                 updateSessionStorage(value, navigationHistory);
-                reloadList(value)
             }
             thumbnailTest.src = folderIcon;
             folderDiv.append(thumbnailTest);
@@ -169,10 +168,10 @@ export function FileList() {
         if (useEffectRunCount >= 1) {
             return;
         }
-        reloadList(checkSessionStorage())
+        reloadList(getfolderId)
         updateSessionStorage(getfolderId, navigationHistory);
         useEffectRunCount++;
-    }, [getSortType]);
+    }, [getSortType, getfolderId]);
 
     return (<div style={{ display: "flex", flexDirection: "column" }}>
         <h1>{currentFolderName}</h1>
