@@ -22,6 +22,7 @@ export function Navbar() {
             return r.json();
         }).catch((e) => { console.error(e); });
         localStorage.removeItem("user"); 
+        sessionStorage.removeItem("file_list");
         window.location.reload();
     }
 
