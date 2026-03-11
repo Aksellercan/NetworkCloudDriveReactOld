@@ -11,7 +11,7 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
     const [state, setState] = useState("Upload Files");
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
+    function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
         const target = e.target as HTMLInputElement & {
             files: FileList;
         };
@@ -21,6 +21,7 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
 
     async function handleFileUpload() {
         if (files === undefined) {
+            fileInputRef.current!.focus();
             return
         }
         setState("Uploading files...");

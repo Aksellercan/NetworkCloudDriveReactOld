@@ -19,7 +19,7 @@ export function FileList() {
 
     function checkSessionStorageSorting(): string {
         if (sessionStorage.getItem("file_list") === null) {
-            return "DEFAULT";
+            return "ALPHABETICAL";
         }
         return JSON.parse(sessionStorage.getItem("file_list")!).sort_type;
     }
@@ -104,7 +104,7 @@ export function FileList() {
     const fetchFileList = async (current_folderid: number, sortType: string) => {
         console.log(`fetch ${sortType}`);
         const response = await fetch(
-            `${process.env.REACT_APP_API_URL}/api/filesystem/list?folderid=${current_folderid}&fileListFilter=${sortType}`, {
+            `${process.env.REACT_APP_API_URL}/api/filesystem/list?folderid=${current_folderid}&sortby=${sortType}`, {
             method: "GET",
             credentials: "include"
         }).then((r) => { return r.json(); }).catch((e) => { console.error(e); });
@@ -179,11 +179,13 @@ export function FileList() {
             <CreateFolder currentFolderId={getfolderId} />
             <UploadButton currentFolderId={getfolderId} />
             <select value={getSortType} onChange={e => onSortChange(e.target.value)}>
-                <option value="DEFAULT">Default</option>
-                <option value="ALPHABETIC">A-Z</option>
-                <option value="REVERSE_ALPHABETIC">Z-A</option>
+                <option value="DEFAULT">No sorting</option>
+                <option value="ALPHABETICAL">A-Z</option>
+                <option value="REVERSE_ALPHABETICAL">Z-A</option>
                 <option value="NEWEST">Newest first</option>
                 <option value="OLDEST">Oldest first</option>
+                <option value="SIZE">Size highest</option>
+                <option value="SIZE_LOWEST">Size lowest</option>
             </select>
         </div>
         <div id="navigationDiv"></div>
