@@ -11,10 +11,16 @@ export function FileList() {
     const navigationHistory: number[] = checkSessionStorageNavigationHistory();
     const [currentFolderName, setCurrentFolderName] = useState("");
     const [getSortType, setSortType] = useState(checkSessionStorageSorting());
+    const [getFilterType, setFilterType] = useState("DEFAULT");
 
     async function onSortChange(chosenValue: string) {
         console.log(`chosen value ${chosenValue}`);
         setSortType(chosenValue);
+    }
+
+    async function onFilterChange(chosenValue: string) {
+        console.log(`chosen value ${chosenValue}`);
+        setFilterType(chosenValue);
     }
 
     function checkSessionStorageSorting(): string {
@@ -55,12 +61,12 @@ export function FileList() {
     function updateSessionStorage(currentFolder: number, currentNavigationHistory: number[]) {
         sessionStorage.setItem(
             "file_list",
-             JSON.stringify(
+            JSON.stringify(
                 {
-                     "current_folder": currentFolder,
-                      "navigation_history": currentNavigationHistory,
-                      "sort_type": getSortType
-                    }));
+                    "current_folder": currentFolder,
+                    "navigation_history": currentNavigationHistory,
+                    "sort_type": getSortType
+                }));
     }
 
     async function goBack(current_folderid: number) {
@@ -79,7 +85,7 @@ export function FileList() {
         folderList.id = "folderList";
         folderList.className = "folderDiv";
         outer_div.append(fileList);
-        getFileList(folderid, getSortType);
+        getFileList(folderid, getSortType, getFilterType);
         const navigationDiv = document.getElementById("navigationDiv")!;
         if (folderid !== 0) {
             if (navigationDiv.childElementCount > 0) {
@@ -111,8 +117,23 @@ export function FileList() {
         return response;
     }
 
-    async function getFileList(current_folderid: number, sortType: string) {
-        let response = await fetchFileList(current_folderid, sortType);
+    const fetchFileListFiltered = async (current_folderid: number, filterType: string) => {
+        console.log(`fetch ${filterType}`);
+        const response = await fetch(
+            `${process.env.REACT_APP_API_URL}/api/filesystem/list?folderid=${current_folderid}&filterby=${filterType}`, {
+            method: "GET",
+            credentials: "include"
+        }).then((r) => { return r.json(); }).catch((e) => { console.error(e); });
+        return response;
+    }
+
+    async function getFileList(current_folderid: number, sortType: string, filterType: string) {
+        let response: any;
+        if (filterType !== "DEFAULT") {
+            response = await fetchFileListFiltered(current_folderid, filterType);
+        } else {
+            response = await fetchFileList(current_folderid, sortType);
+        }
         const infoResponse = await fetchFileInfo(current_folderid);
         const fileList = document.getElementById("fileList")!;
         setCurrentFolderName(`${infoResponse.name} :ID ${infoResponse.id}`);
@@ -125,41 +146,44 @@ export function FileList() {
             test.append(goBackFunc);
         }
 
-        for (let i: number = 0; i < response.folders.length; i++) {
-            const folderDiv = document.createElement("div");
-            folderDiv.className = "folder";
-            const folderLink = document.createElement("p");
-            const thumbnailTest = document.createElement("img");
-            folderDiv.onclick = () => {
-                let value = response.folders[i].id;
-                setFolderId(value);
-                appendToHistory(value);
-                updateSessionStorage(value, navigationHistory);
+        if (response.folders !== undefined) {
+            for (let i: number = 0; i < response.folders.length; i++) {
+                const folderDiv = document.createElement("div");
+                folderDiv.className = "folder";
+                const folderLink = document.createElement("p");
+                const thumbnailTest = document.createElement("img");
+                folderDiv.onclick = () => {
+                    let value = response.folders[i].id;
+                    setFolderId(value);
+                    appendToHistory(value);
+                    updateSessionStorage(value, navigationHistory);
+                }
+                thumbnailTest.src = folderIcon;
+                folderDiv.append(thumbnailTest);
+                folderLink.textContent = `${response.folders[i].name}`
+                folderDiv.append(folderLink);
+                fileList.append(folderDiv);
             }
-            thumbnailTest.src = folderIcon;
-            folderDiv.append(thumbnailTest);
-            folderLink.textContent = `${response.folders[i].name}`
-            folderDiv.append(folderLink);
-            fileList.append(folderDiv);
         }
-
-        for (let i: number = 0; i < response.files.length; i++) {
-            const fileDiv = document.createElement("div");
-            fileDiv.className = "file";
-            const fileLink = document.createElement("p");
-            const thumbnailTest = document.createElement("img");
-            if (response.files[i].hasThumbnail === true) {
-                thumbnailTest.src = `${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileId=${response.files[i].id}`
-            } else {
-                thumbnailTest.src = no_thumbnail_file;
+        if (response.files !== undefined) {
+            for (let i: number = 0; i < response.files.length; i++) {
+                const fileDiv = document.createElement("div");
+                fileDiv.className = "file";
+                const fileLink = document.createElement("p");
+                const thumbnailTest = document.createElement("img");
+                if (response.files[i].hasThumbnail === true) {
+                    thumbnailTest.src = `${process.env.REACT_APP_API_URL}/api/thumbnails/getbyfileid?fileId=${response.files[i].id}`
+                } else {
+                    thumbnailTest.src = no_thumbnail_file;
+                }
+                fileDiv.onclick = () => {
+                    downloadFile(response.files[i].id)
+                }
+                fileDiv.append(thumbnailTest);
+                fileLink.textContent = `${response.files[i].name}`
+                fileDiv.append(fileLink);
+                fileList.append(fileDiv);
             }
-            fileDiv.onclick = () => {
-                downloadFile(response.files[i].id)
-            }
-            fileDiv.append(thumbnailTest);
-            fileLink.textContent = `${response.files[i].name}`
-            fileDiv.append(fileLink);
-            fileList.append(fileDiv);
         }
     }
 
@@ -168,10 +192,10 @@ export function FileList() {
         if (useEffectRunCount >= 1) {
             return;
         }
-        reloadList(getfolderId)
+        reloadList(getfolderId);
         updateSessionStorage(getfolderId, navigationHistory);
         useEffectRunCount++;
-    }, [getSortType, getfolderId]);
+    }, [getSortType, getfolderId, getFilterType]);
 
     return (<div style={{ display: "flex", flexDirection: "column" }}>
         <h1>{currentFolderName}</h1>
@@ -186,6 +210,12 @@ export function FileList() {
                 <option value="OLDEST">Oldest first</option>
                 <option value="SIZE">Size highest</option>
                 <option value="SIZE_LOWEST">Size lowest</option>
+            </select>
+            <select value={getFilterType} onChange={e => onFilterChange(e.target.value)}>
+                <option value="DEFAULT">No filter</option>
+                <option value="FILES_ONLY">Files only</option>
+                <option value="FOLDERS_ONLY">Folders only</option>
+                <option value="KEYWORD">Keyword</option>
             </select>
         </div>
         <div id="navigationDiv"></div>
