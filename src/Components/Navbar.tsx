@@ -8,6 +8,7 @@ export function Navbar() {
     const [showNav, setShowNav] = useState(false)
     const [showUserDropdown, setShowUserDropdown] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const hamburgerMenuRef = useRef<HTMLDivElement>(null)
 
     const toggleNavItems = () => {
         setShowNav(!showNav)
@@ -36,6 +37,9 @@ export function Navbar() {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setShowUserDropdown(false)
             }
+            if (hamburgerMenuRef.current && !hamburgerMenuRef.current.contains(event.target as Node)) {
+                setShowNav(false)
+            }
         }
         document.addEventListener("mousedown", handleClickOutside)
         return () => {
@@ -51,13 +55,16 @@ export function Navbar() {
                 <div className="brand">
                     <p>NetworkCloudDrive</p>
                 </div>
-                <div className="menu-icon" onClick={toggleNavItems}>
+                <div className="menu-icon" onClick={toggleNavItems} ref={hamburgerMenuRef}>
                     <p>Menu</p>
                 </div>
                 <div className={`nav-elements  ${showNav && 'active'}`}>
                     <ul>
                         <li>
-                            <NavLink to="/">File List</NavLink>
+                            <NavLink to="/">Home</NavLink>
+                        </li>
+                        <li>
+                            <DarkModeHandler />
                         </li>
                         <li>
                             <div className="user-dropdown" ref={dropdownRef}>
@@ -77,9 +84,6 @@ export function Navbar() {
                                     )}
                                 </div>
                             </div>
-                        </li>
-                        <li>
-                            <DarkModeHandler />
                         </li>
                     </ul>
                 </div>
