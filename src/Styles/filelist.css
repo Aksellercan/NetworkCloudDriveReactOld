@@ -1,3 +1,21 @@
+:root {
+  --file-card-bg: #333333;
+  --file-card-border: #cccccc;
+  --file-card-text: inherit;
+  --hover-gradient-start: #5972a7;
+  --hover-gradient-end: #637aad;
+  --hover-bg: #5972a7;
+}
+
+[data-theme="light"] {
+  --file-card-bg: #ffffff;
+  --file-card-border: #cccccc;
+  --file-card-text: inherit;
+  --hover-gradient-start: #5972a7;
+  --hover-gradient-end: #637aad;
+  --hover-bg: #5972a7;
+}
+
 .fileDiv,
 .folderDiv {
     display: flex;
@@ -10,9 +28,11 @@
 .fileDiv>div {
     width: 120px;
     height: 180px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--file-card-border);
     padding: 16px;
     border-radius: 8px;
+    background-color: var(--file-card-bg);
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 @media only screen and ((max-width: 391px) and (min-width: 386px)) {
@@ -83,10 +103,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--file-card-text);
 }
 
 .file:hover,
 .folder:hover {
-    background: linear-gradient(to bottom, #5972a7 5%, #637aad 100%);
-    background-color: #5972a7;
+    background: linear-gradient(to bottom, var(--hover-gradient-start) 5%, var(--hover-gradient-end) 100%);
+    background-color: var(--hover-bg);
 }

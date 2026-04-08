@@ -1,3 +1,47 @@
+:root {
+  --background-color: #2e2e2e;
+  --text-color: #ffffff;
+  --navbar-bg: #467ea1;
+  --navbar-text: #2f234f;
+  --navbar-text-active: #ffffff;
+  --nav-mobile-bg: #2d5873;
+  --card-bg: #42414d;
+  --card-border: #555555;
+  --input-bg: #1a1a1a;
+  --input-border: #666666;
+  --input-text: #ffffff;
+  --button-bg: #000000;
+  --button-text: #f0f8ff;
+  --button-hover-start: #5972a7;
+  --button-hover-end: #637aad;
+  --file-card-bg: #333333;
+  --file-card-border: #cccccc;
+  --hover-gradient-start: #5972a7;
+  --hover-gradient-end: #637aad;
+}
+
+[data-theme="light"] {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --navbar-bg: #467ea1;
+  --navbar-text: #ffffff;
+  --navbar-text-active: #ffffff;
+  --nav-mobile-bg: #2d5873;
+  --card-bg: #ffffff;
+  --card-border: #e0e0e0;
+  --input-bg: #ffffff;
+  --input-border: #888888;
+  --input-text: #000000;
+  --button-bg: #2e2e2e;
+  --button-text: #f0f8ff;
+  --button-hover-start: #5972a7;
+  --button-hover-end: #637aad;
+  --file-card-bg: #ffffff;
+  --file-card-border: #cccccc;
+  --hover-gradient-start: #5972a7;
+  --hover-gradient-end: #637aad;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,11 +49,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-

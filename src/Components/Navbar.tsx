@@ -1,14 +1,20 @@
 import { NavLink } from "react-router-dom";
 import "../Styles/navbar.css"
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { DarkModeHandler } from "../Functions/DarkModeHandler";
 import { ReturnUsername } from "../Functions/ReturnUsername";
 
 export function Navbar() {
     const [showNav, setShowNav] = useState(false)
+    const [showUserDropdown, setShowUserDropdown] = useState(false)
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
     const toggleNavItems = () => {
         setShowNav(!showNav)
+    }
+
+    const toggleUserDropdown = () => {
+        setShowUserDropdown(!showUserDropdown)
     }
 
     const logout = async () => {
@@ -25,6 +31,20 @@ export function Navbar() {
         window.location.reload();
     }
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowUserDropdown(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [])
+
+    const isLoggedIn = localStorage.getItem("user") !== null
+
     return (
         <nav className="navbar">
             <div className="container">
@@ -40,19 +60,26 @@ export function Navbar() {
                             <NavLink to="/">File List</NavLink>
                         </li>
                         <li>
-                            <NavLink to="/login">Login</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/register">Register</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/logout" onClick={logout}>Logout</NavLink>
+                            <div className="user-dropdown" ref={dropdownRef}>
+                                <button className="dropdown-trigger" onClick={toggleUserDropdown}>
+                                    <ReturnUsername />
+                                    <span className={`dropdown-arrow ${showUserDropdown ? 'open' : ''}`}>▼</span>
+                                </button>
+                                <div className={`dropdown-menu ${showUserDropdown ? 'active' : ''}`}>
+                                    {!isLoggedIn && (
+                                        <NavLink to="/login" className="dropdown-item">Login</NavLink>
+                                    )}
+                                    {!isLoggedIn && (
+                                        <NavLink to="/register" className="dropdown-item">Register</NavLink>
+                                    )}
+                                    {isLoggedIn && (
+                                        <NavLink to="/logout" className="dropdown-item" onClick={logout}>Logout</NavLink>
+                                    )}
+                                </div>
+                            </div>
                         </li>
                         <li>
                             <DarkModeHandler />
-                        </li>
-                        <li>
-                            <ReturnUsername />
                         </li>
                     </ul>
                 </div>

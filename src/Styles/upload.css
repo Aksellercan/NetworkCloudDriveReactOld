@@ -1,6 +1,15 @@
+:root {
+  --upload-text: #ffffff;
+}
+
+[data-theme="light"] {
+  --upload-text: #000000;
+}
+
 .uploadButtonDiv {
     float: left;
-    color: white;
+    color: var(--upload-text);
+    transition: color 0.3s;
 }
 
 .uploadButtonDiv>button {

@@ -1,18 +1,52 @@
+:root {
+  --form-text: #ffffff;
+  --input-bg: #000000;
+  --input-border: #888888;
+  --input-text: #ffffff;
+}
+
+[data-theme="light"] {
+  --form-text: #000000;
+  --input-bg: #ffffff;
+  --input-border: #888888;
+  --input-text: #000000;
+}
+
 .formDiv {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--form-text);
+    transition: color 0.3s;
 }
 
 .inputDiv input {
-    border: 2px solid gray;
+    border: 2px solid var(--input-border);
     border-radius: 5px;
-    color: white;
+    color: var(--input-text);
     padding: 2%;
-    background-color: black;
+    background-color: var(--input-bg);
     width: 80%;
     min-width: fit-content;
     max-width: 300%;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.loginForm h1 {
+    margin: 0 0 10px 0;
+}
+
+.submitDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
 }

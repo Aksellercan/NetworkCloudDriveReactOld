@@ -1,5 +1,6 @@
 import { useState } from "react";
 import React from "react";
+import "../Styles/login.css"
 
 export function Register() {
     const [username, setUsername] = useState("");
@@ -43,45 +44,51 @@ export function Register() {
     }
 
     return (
-        <div>
-            <h1>Register</h1>
-            <form>
-                <label>
-                    Username
-                    <input
-                        type="name"
-                        id="username_input"
-                        name="username"
-                        value={username}
-                        onChange={handleUsernameChange}
-                        required
-                    />
-                </label>
-                <label>
-                    User Mail
-                    <input
-                        type="email"
-                        id="username_input"
-                        name="username"
-                        value={mail}
-                        onChange={handleMailChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Password
-                    <input
-                        type="password"
-                        id="password_input"
-                        name="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        required
-                    />
-                </label>
-            </form>
-            <button onClick={registerForm}>submit</button>
-            <p>{userState}</p>
-        </div>
+        <>
+            <div className="formDiv">
+                <div>
+                    <form className="loginForm">
+                        <h1>Register</h1>
+                        <div className="inputDiv">
+                            <input
+                                type="name"
+                                id="username_input"
+                                name="username"
+                                value={username}
+                                placeholder="Username"
+                                onChange={handleUsernameChange}
+                                required
+                            />
+                        </div>
+                        <div className="inputDiv">
+                            <input
+                                type="email"
+                                id="mail_input"
+                                name="mail"
+                                value={mail}
+                                placeholder="User Mail"
+                                onChange={handleMailChange}
+                                required
+                            />
+                        </div>
+                        <div className="inputDiv">
+                            <input
+                                type="password"
+                                id="password_input"
+                                name="password"
+                                value={password}
+                                placeholder="Password"
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+                    </form>
+                </div>
+                <div className="submitDiv">
+                    <button onClick={registerForm}>submit</button>
+                    <p>{userState}</p>
+                </div>
+            </div>
+        </>
     );
 }
