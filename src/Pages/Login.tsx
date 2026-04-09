@@ -2,12 +2,14 @@ import { useState } from "react";
 import React from "react";
 import { FetchUserDetails } from "../Functions/FetchUserDetails";
 import "../Styles/login.css"
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
     const [mail, setMail] = useState("");
     const [remember_me, setRemember_me] = useState("");
     const [password, setPassword] = useState("");
     const [userState, setUserState] = useState("");
+    const navigate = useNavigate();
 
     function handleMailChange(e: React.ChangeEvent<HTMLInputElement>) {
         setMail(e.currentTarget.value);
@@ -31,9 +33,11 @@ export function Login() {
             }),
             credentials: "include",
         })
-            .then((res) => {
+            .then(async (res) => {
                 if (res.ok) {
                     console.log("logged in");
+                    await FetchUserDetails();
+                    navigate("/");
                 } else {
                     setUserState("Invalid credentials");
                     console.log("failed to login");
@@ -41,8 +45,6 @@ export function Login() {
                 }
             })
             .catch((e) => console.error(e));
-        await FetchUserDetails();
-        window.location.reload();
     }
 
     return (

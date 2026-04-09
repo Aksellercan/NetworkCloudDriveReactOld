@@ -25,20 +25,16 @@ export function Navbar() {
             credentials: "include"
         }).then((r) => {
             console.log("Status code", r.status);
-            return r.json();
-        }).catch((e) => { console.error(e); });
-        localStorage.removeItem("user"); 
-        sessionStorage.removeItem("file_list");
-        window.location.reload();
+            localStorage.removeItem("user");
+            sessionStorage.removeItem("file_list");
+            window.location.reload();
+        }).catch((e) => console.error(e));
     }
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setShowUserDropdown(false)
-            }
-            if (hamburgerMenuRef.current && !hamburgerMenuRef.current.contains(event.target as Node)) {
-                setShowNav(false)
             }
         }
         document.addEventListener("mousedown", handleClickOutside)

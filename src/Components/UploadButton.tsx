@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { UploadFile } from "../Functions/UploadFile";
 import "../Styles/upload.css"
 
@@ -8,8 +8,29 @@ type UploadButtonProps = {
 
 export function UploadButton({ currentFolderId }: UploadButtonProps) {
     const [files, setFile] = useState<FileList | undefined>();
-    const [state, setState] = useState("Upload Files");
+    const [state, setState] = useState(getLastUploadData());
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    function saveLastUploadData(idString: string, counter: number) {
+        sessionStorage.setItem("upload_status", JSON.stringify({
+            "last_status": idString,
+            "count": counter
+        }));
+    }
+
+    function getLastUploadData(): string {
+        if (sessionStorage.getItem("upload_status") === null) {
+            return "Upload Files";
+        }
+        const parse = JSON.parse(sessionStorage.getItem("upload_status")!);
+        let count: number = parse.count;
+        if (count > 0) {
+            return "Upload Files";
+        }
+        const lastStatus: string = parse.last_status;
+        saveLastUploadData(lastStatus, ++count);
+        return lastStatus;
+    }
 
     function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
         const target = e.target as HTMLInputElement & {
@@ -33,13 +54,14 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
         let uploadedFilesId = "";
         for (let i = 0; i < results.files.length; i++) {
             if (i === results.files.length - 1) {
-                uploadedFilesId += `${results.files[i].id}`
+                uploadedFilesId += `${results.files[i].fileId}`
                 break;
             }
-            uploadedFilesId += `${results.files[i].id}, `
+            uploadedFilesId += `${results.files[i].fileId}, `
         }
-        setState(`Uploaded ${uploadedFilesId}`);
         fileInputRef.current!.value = '';
+        saveLastUploadData(`Uploaded ${uploadedFilesId}`, 0)
+        window.location.reload();
     }
 
     return (
