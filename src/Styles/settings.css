@@ -1,0 +1,180 @@
+:root {
+  --settings-text: var(--text-color);
+  --settings-input-bg: var(--input-bg);
+  --settings-input-border: var(--input-border);
+  --settings-input-text: var(--input-text);
+  --settings-success: #4caf50;
+  --settings-success-bg: rgba(76, 175, 80, 0.1);
+  --settings-error: #f44336;
+  --settings-error-bg: rgba(244, 67, 54, 0.1);
+  --settings-fieldset-border: var(--card-border);
+}
+
+.settings-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--settings-text);
+}
+
+.settings-container h1 {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.settings-section {
+  margin-bottom: 24px;
+}
+
+.settings-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.settings-input {
+  border: 2px solid var(--settings-input-border);
+  border-radius: 5px;
+  padding: 10px 12px;
+  background-color: var(--settings-input-bg);
+  color: var(--settings-input-text);
+  font-size: 16px;
+  width: 200px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: var(--navbar-bg);
+}
+
+.settings-subtitle {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.options-groups {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.options-group {
+  border: 2px solid var(--settings-fieldset-border);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 200px;
+  flex: 1;
+}
+
+.options-group legend {
+  font-weight: 600;
+  padding: 0 8px;
+  color: var(--settings-text);
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  accent-color: var(--navbar-bg);
+  width: 16px;
+  height: 16px;
+}
+
+.radio-option span {
+  font-size: 14px;
+}
+
+.scan-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.settings-button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid var(--button-bg);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 150px;
+}
+
+.settings-button:hover:not(:disabled) {
+  background: linear-gradient(to bottom, var(--button-hover-start) 5%, var(--button-hover-end) 100%);
+  border-color: var(--button-hover-start);
+}
+
+.settings-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-button.primary {
+  background-color: var(--navbar-bg);
+  color: white;
+  border-color: var(--navbar-bg);
+}
+
+.settings-button.primary:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #5a8fb8 5%, #4a7fa8 100%);
+}
+
+.settings-error {
+  padding: 12px 16px;
+  background-color: var(--settings-error-bg);
+  border: 1px solid var(--settings-error);
+  border-radius: 8px;
+  color: var(--settings-error);
+  margin-top: 16px;
+  text-align: center;
+}
+
+.settings-result {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.settings-result.success {
+  background-color: var(--settings-success-bg);
+  border: 1px solid var(--settings-success);
+}
+
+.settings-result.failure {
+  background-color: var(--settings-error-bg);
+  border: 1px solid var(--settings-error);
+}
+
+.settings-result h3 {
+  margin: 0 0 12px 0;
+}
+
+.result-metadata {
+  text-align: left;
+  display: inline-block;
+}
+
+.result-metadata p {
+  margin: 4px 0;
+}
+
+@media (max-width: 600px) {
+  .options-groups {
+    flex-direction: column;
+  }
+
+  .settings-button {
+    width: 100%;
+  }
+}

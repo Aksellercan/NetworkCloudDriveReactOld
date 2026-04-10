@@ -86,12 +86,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    height: fit-content;
+    box-sizing: border-box;
 }
 
 .file>img,
 .folder>img {
     width: 100%;
-    height: 100px;
+    height: 100%;
     object-fit: contain;
 }
 
@@ -110,4 +113,35 @@
 .folder:hover {
     background: linear-gradient(to bottom, var(--hover-gradient-start) 5%, var(--hover-gradient-end) 100%);
     background-color: var(--hover-bg);
+}
+
+.file.list-view,
+.folder.list-view {
+    width: 100%;
+    height: fit-content;
+    flex-direction: row;
+    padding: 12px;
+    gap: 12px;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+
+.file.list-view:hover,
+.folder.list-view:hover {
+    background: linear-gradient(to bottom, var(--hover-gradient-start) 5%, var(--hover-gradient-end) 100%);
+    background-color: var(--hover-bg);
+}
+
+.file.list-view>img,
+.folder.list-view>img {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.file.list-view>p,
+.folder.list-view>p {
+    flex: 1;
+    text-align: left;
+    font-size: medium;
 }

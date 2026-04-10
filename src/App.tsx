@@ -6,6 +6,7 @@ import { UploadPage } from "./Pages/UploadPage";
 import { Layout } from "./Layout";
 import { Login } from "./Pages/Login";
 import { List } from "./Pages/List";
+import { SettingsPage } from "./Pages/SettingsPage";
 import { useEffect } from "react";
 import { FetchUserDetails } from "./Functions/FetchUserDetails";
 
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/upload" element={<UploadPage />} />
                     <Route path="/logout" element={<Login />} />
                     <Route path = "/register" element={<Register />} />
+                    <Route path="/settings" element={<SettingsPage />} />
                 </Route>
             </Routes>
         </Router>

@@ -1,4 +1,4 @@
-export function ReturnUsername() {
+export function ReturnUsername(): string {
     const user = localStorage.getItem("user");
-    return (<>{user === null ? "Logged out" : `User ${user}`}</>);
+    return (user === null ? "Logged out" : `User ${user}`);
 }

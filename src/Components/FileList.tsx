@@ -12,6 +12,7 @@ export function FileList() {
     const [currentFolderName, setCurrentFolderName] = useState("");
     const [getSortType, setSortType] = useState(checkSessionStorageSorting());
     const [getFilterType, setFilterType] = useState("DEFAULT");
+    const [viewMode, setViewMode] = useState(checkSessionStorageViewMode());
 
     async function onSortChange(chosenValue: string) {
         console.log(`chosen value ${chosenValue}`);
@@ -23,11 +24,23 @@ export function FileList() {
         setFilterType(chosenValue);
     }
 
+    async function onViewModeChange(chosenValue: string) {
+        console.log(`view mode ${chosenValue}`);
+        setViewMode(chosenValue);
+    }
+
     function checkSessionStorageSorting(): string {
         if (sessionStorage.getItem("file_list") === null) {
             return "ALPHABETICAL";
         }
         return JSON.parse(sessionStorage.getItem("file_list")!).sort_type;
+    }
+
+    function checkSessionStorageViewMode(): string {
+        if (sessionStorage.getItem("file_list") === null) {
+            return "GRID";
+        }
+        return JSON.parse(sessionStorage.getItem("file_list")!).view_mode;
     }
 
     function appendToHistory(folderid: number) {
@@ -65,7 +78,8 @@ export function FileList() {
                 {
                     "current_folder": currentFolder,
                     "navigation_history": currentNavigationHistory,
-                    "sort_type": getSortType
+                    "sort_type": getSortType,
+                    "view_mode": viewMode
                 }));
     }
 
@@ -149,7 +163,7 @@ export function FileList() {
         if (response.folders !== undefined) {
             for (let i: number = 0; i < response.folders.length; i++) {
                 const folderDiv = document.createElement("div");
-                folderDiv.className = "folder";
+                folderDiv.className = viewMode === "LIST" ? "folder list-view" : "folder";
                 const folderLink = document.createElement("p");
                 const thumbnailTest = document.createElement("img");
                 folderDiv.onclick = () => {
@@ -168,7 +182,7 @@ export function FileList() {
         if (response.files !== undefined) {
             for (let i: number = 0; i < response.files.length; i++) {
                 const fileDiv = document.createElement("div");
-                fileDiv.className = "file";
+                fileDiv.className = viewMode === "LIST" ? "file list-view" : "file";
                 const fileLink = document.createElement("p");
                 const thumbnailTest = document.createElement("img");
                 if (response.files[i].hasThumbnail === true) {
@@ -195,7 +209,7 @@ export function FileList() {
         reloadList(getfolderId);
         updateSessionStorage(getfolderId, navigationHistory);
         useEffectRunCount++;
-    }, [getSortType, getfolderId, getFilterType]);
+    }, [getSortType, getfolderId, getFilterType, viewMode]);
 
     return (<div style={{ display: "flex", flexDirection: "column" }}>
         <h1>{currentFolderName}</h1>
@@ -216,6 +230,10 @@ export function FileList() {
                 <option value="FILES_ONLY">Files only</option>
                 <option value="FOLDERS_ONLY">Folders only</option>
                 <option value="KEYWORD">Keyword</option>
+            </select>
+            <select value={viewMode} onChange={e => onViewModeChange(e.target.value)}>
+                <option value="GRID">Grid</option>
+                <option value="LIST">List</option>
             </select>
         </div>
         <div id="navigationDiv"></div>

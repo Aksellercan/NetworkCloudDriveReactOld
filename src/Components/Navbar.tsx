@@ -7,6 +7,7 @@ import { ReturnUsername } from "../Functions/ReturnUsername";
 export function Navbar() {
     const [showNav, setShowNav] = useState(false)
     const [showUserDropdown, setShowUserDropdown] = useState(false)
+    const [loggedInUser, setLoggedInUser] = useState("Logged out");
     const dropdownRef = useRef<HTMLDivElement>(null)
     const hamburgerMenuRef = useRef<HTMLDivElement>(null)
 
@@ -32,6 +33,7 @@ export function Navbar() {
     }
 
     useEffect(() => {
+        setLoggedInUser(ReturnUsername());
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setShowUserDropdown(false)
@@ -60,12 +62,15 @@ export function Navbar() {
                             <NavLink to="/">Home</NavLink>
                         </li>
                         <li>
+                            <NavLink to="/settings">Settings</NavLink>
+                        </li>
+                        <li>
                             <DarkModeHandler />
                         </li>
                         <li>
                             <div className="user-dropdown" ref={dropdownRef}>
                                 <button className="dropdown-trigger" onClick={toggleUserDropdown}>
-                                    <ReturnUsername />
+                                    {loggedInUser}
                                     <span className={`dropdown-arrow ${showUserDropdown ? 'open' : ''}`}>▼</span>
                                 </button>
                                 <div className={`dropdown-menu ${showUserDropdown ? 'active' : ''}`}>

@@ -9,7 +9,7 @@ export const FetchUserDetails = async () => {
         .then(async (r) => {
             
             let object = await r.json()
-            localStorage.setItem("user", object.name);
+            localStorage.setItem("user", object.object.name);
             })
         .catch((err) => {
             localStorage.removeItem("user");
