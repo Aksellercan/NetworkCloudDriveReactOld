@@ -1,19 +1,19 @@
 :root {
-  --file-card-bg: #333333;
-  --file-card-border: #cccccc;
-  --file-card-text: inherit;
-  --hover-gradient-start: #5972a7;
-  --hover-gradient-end: #637aad;
-  --hover-bg: #5972a7;
+    --file-card-bg: #333333;
+    --file-card-border: #cccccc;
+    --file-card-text: inherit;
+    --hover-gradient-start: #5972a7;
+    --hover-gradient-end: #637aad;
+    --hover-bg: #5972a7;
 }
 
 [data-theme="light"] {
-  --file-card-bg: #ffffff;
-  --file-card-border: #cccccc;
-  --file-card-text: inherit;
-  --hover-gradient-start: #5972a7;
-  --hover-gradient-end: #637aad;
-  --hover-bg: #5972a7;
+    --file-card-bg: #ffffff;
+    --file-card-border: #cccccc;
+    --file-card-text: inherit;
+    --hover-gradient-start: #5972a7;
+    --hover-gradient-end: #637aad;
+    --hover-bg: #5972a7;
 }
 
 .fileDiv,
@@ -26,11 +26,11 @@
 
 .folderDiv>div,
 .fileDiv>div {
-    width: 120px;
-    height: 180px;
+    width: 8.34%;
+    min-height: 120px;
     border: 1px solid var(--file-card-border);
-    padding: 16px;
-    border-radius: 8px;
+    padding: 16px 16px 0px;
+    border-radius: 12px;
     background-color: var(--file-card-bg);
     transition: background-color 0.3s, border-color 0.3s;
 }
@@ -87,20 +87,21 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: fit-content;
+    height: 20vh;
     box-sizing: border-box;
 }
 
 .file>img,
 .folder>img {
-    width: 100%;
-    height: 100%;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
 }
 
 .file>p,
 .folder>p {
     width: 100%;
+    min-height: 2rem;
     font-size: small;
     text-align: center;
     white-space: nowrap;
