@@ -27,6 +27,7 @@ export function FileList() {
     async function onViewModeChange(chosenValue: string) {
         console.log(`view mode ${chosenValue}`);
         setViewMode(chosenValue);
+        //temp
         localStorage.setItem(
             "file_list",
             JSON.stringify(
@@ -43,7 +44,7 @@ export function FileList() {
     }
 
     function checkLocalStorageViewMode(): string {
-        if (sessionStorage.getItem("file_list") === null) {
+        if (localStorage.getItem("file_list") === null) {
             return "GRID";
         }
         return JSON.parse(localStorage.getItem("file_list")!).view_mode;
@@ -84,8 +85,7 @@ export function FileList() {
                 {
                     "current_folder": currentFolder,
                     "navigation_history": currentNavigationHistory,
-                    "sort_type": getSortType,
-                    "view_mode": viewMode
+                    "sort_type": getSortType
                 }));
     }
 
