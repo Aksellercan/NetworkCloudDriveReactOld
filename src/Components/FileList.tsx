@@ -12,7 +12,7 @@ export function FileList() {
     const [currentFolderName, setCurrentFolderName] = useState("");
     const [getSortType, setSortType] = useState(checkSessionStorageSorting());
     const [getFilterType, setFilterType] = useState("DEFAULT");
-    const [viewMode, setViewMode] = useState(checkSessionStorageViewMode());
+    const [viewMode, setViewMode] = useState(checkLocalStorageViewMode());
 
     async function onSortChange(chosenValue: string) {
         console.log(`chosen value ${chosenValue}`);
@@ -27,6 +27,12 @@ export function FileList() {
     async function onViewModeChange(chosenValue: string) {
         console.log(`view mode ${chosenValue}`);
         setViewMode(chosenValue);
+        localStorage.setItem(
+            "file_list",
+            JSON.stringify(
+                {
+                    "view_mode": chosenValue
+                }));
     }
 
     function checkSessionStorageSorting(): string {
@@ -36,11 +42,11 @@ export function FileList() {
         return JSON.parse(sessionStorage.getItem("file_list")!).sort_type;
     }
 
-    function checkSessionStorageViewMode(): string {
+    function checkLocalStorageViewMode(): string {
         if (sessionStorage.getItem("file_list") === null) {
             return "GRID";
         }
-        return JSON.parse(sessionStorage.getItem("file_list")!).view_mode;
+        return JSON.parse(localStorage.getItem("file_list")!).view_mode;
     }
 
     function appendToHistory(folderid: number) {
