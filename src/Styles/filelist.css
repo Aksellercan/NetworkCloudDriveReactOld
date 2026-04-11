@@ -1,6 +1,5 @@
 :root {
     --file-card-bg: #333333;
-    --file-card-border: #cccccc;
     --file-card-text: inherit;
     --hover-gradient-start: #5972a7;
     --hover-gradient-end: #637aad;
@@ -8,8 +7,7 @@
 }
 
 [data-theme="light"] {
-    --file-card-bg: #ffffff;
-    --file-card-border: #cccccc;
+    --file-card-bg: #f7f7f7;
     --file-card-text: inherit;
     --hover-gradient-start: #5972a7;
     --hover-gradient-end: #637aad;
@@ -18,67 +16,23 @@
 
 .fileDiv,
 .folderDiv {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
     padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.folderDiv>div,
-.fileDiv>div {
-    width: 8.34%;
+.fileDiv>div,
+.folderDiv>div {
     min-height: 120px;
-    border: 1px solid var(--file-card-border);
-    padding: 16px 16px 0px;
+    padding: 16px 8px 0px;
     border-radius: 12px;
     background-color: var(--file-card-bg);
     transition: background-color 0.3s, border-color 0.3s;
-}
-
-@media only screen and ((max-width: 391px) and (min-width: 386px)) {
-
-    .fileDiv>div,
-    .folderDiv>div {
-        width: 97px;
-        height: 150px;
-        padding: 8px;
-    }
-
-    .fileDiv,
-    .folderDiv {
-        gap: 10px;
-        padding: 12px;
-    }
-
-    .file>img,
-    .folder>img {
-        width: 100%;
-        height: 100%;
-    }
-}
-
-@media only screen and (max-width: 385px) {
-
-    .fileDiv,
-    .folderDiv {
-        padding: 4px;
-    }
-}
-
-@media only screen and ((max-width: 430px) and (min-width: 392px)) {
-
-    .fileDiv>div,
-    .folderDiv>div {
-        width: 79px;
-        height: 150px;
-        padding: 8px;
-    }
-
-    .fileDiv,
-    .folderDiv {
-        gap: 4px;
-        padding: 6px;
-    }
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .file,
@@ -87,14 +41,17 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 20vh;
+    height: 100%;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .file>img,
 .folder>img {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+    max-height: 100px;
     object-fit: contain;
 }
 
@@ -108,6 +65,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--file-card-text);
+    box-sizing: border-box;
 }
 
 .file:hover,
@@ -118,13 +76,14 @@
 
 .file.list-view,
 .folder.list-view {
-    width: 100%;
-    height: fit-content;
+    grid-column: 1 / -1;
+    display: flex;
     flex-direction: row;
     padding: 12px;
     gap: 12px;
     justify-content: flex-start;
     box-sizing: border-box;
+    min-height: 80px;
 }
 
 .file.list-view:hover,
@@ -135,14 +94,49 @@
 
 .file.list-view>img,
 .folder.list-view>img {
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
+    object-fit: contain;
 }
 
 .file.list-view>p,
 .folder.list-view>p {
     flex: 1;
+    min-width: 0;
     text-align: left;
     font-size: medium;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .fileDiv,
+    .folderDiv {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fileDiv,
+    .folderDiv {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .fileDiv>div,
+    .folderDiv>div {
+        min-height: 100px;
+        padding: 8px 4px 0px;
+    }
+
+    .file>img,
+    .folder>img {
+        max-width: 70px;
+        max-height: 70px;
+    }
 }
