@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import "../App.css";
 import logo from "../logo.svg";
+import axios from "axios";
 
 export function UploadPage() {
     const [state, setState] = useState("ready to upload");
     const [files, setFile] = useState<FileList | undefined>();
+    const [progress, setProgress] = useState(0);
 
     function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
         const target = e.target as HTMLInputElement & {
@@ -34,28 +36,37 @@ export function UploadPage() {
         }
         formData.append("folderid", folderID_upload);
         setState("started uploading files...");
-        const results = await fetch(
-            `${process.env.REACT_APP_API_URL}/api/file/upload`,
-            {
-                method: "POST",
-                credentials: "include",
-                body: formData,
+        setProgress(0);
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_API_URL}/api/file/upload`,
+                formData,
+                {
+                    withCredentials: true,
+                    onUploadProgress: (progressEvent) => {
+                        if (progressEvent.total) {
+                            setProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100));
+                        }
+                    },
+                }
+            );
+            const results = response.data;
+            console.log("results", results);
+            let uploadedFilesId = "";
+            for (let i = 0; i < results.files.length; i++) {
+                if (i == results.files.length-1) {
+                 uploadedFilesId += `${results.files[i].id}`
+                 break;
+                }
+                uploadedFilesId += `${results.files[i].id}, `
             }
-        )
-            .then((r) => {
-                console.log("status", r.status);
-                return r.json();})
-            .catch((err) => console.log(err));
-        console.log("results", results);
-        let uploadedFilesId = "";
-        for (let i = 0; i < results.files.length; i++) {
-            if (i == results.files.length-1) {
-             uploadedFilesId += `${results.files[i].id}`
-             break;
-            }
-            uploadedFilesId += `${results.files[i].id}, `
+            setState(`Uploaded file ID ${uploadedFilesId}`);
+        } catch (err) {
+            console.log(err);
+            setState("Failed to upload files");
         }
-        setState(`Uploaded file ID ${uploadedFilesId}`);
+        setProgress(0);
     }
     return (
         <>
@@ -67,6 +78,12 @@ export function UploadPage() {
                     <input type="number" id="folderIDSelector" min={0}></input>
                     <button onClick={handleSubmition}>Submit</button>
                 </div>
+                {progress > 0 && (
+                    <div className="uploadProgressContainer">
+                        <progress className="uploadProgress" value={progress} max={100} />
+                        <span className="uploadProgressText">{progress}%</span>
+                    </div>
+                )}
                 <p>{state}</p>
             </header>
         </>

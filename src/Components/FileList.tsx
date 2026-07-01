@@ -147,6 +147,16 @@ export function FileList() {
         return response;
     }
 
+    function appendNavigation(current_folderid: number) {
+        if (current_folderid !== 0) {
+            const test = document.getElementById("navigationDiv")!;
+            const goBackFunc = document.createElement("button");
+            goBackFunc.onclick = () => { goBack(current_folderid) }
+            goBackFunc.textContent = "Back"
+            test.append(goBackFunc);
+        }
+    }
+
     async function getFileList(current_folderid: number, sortType: string, filterType: string) {
         let response: any;
         if (filterType !== "DEFAULT") {
@@ -158,13 +168,7 @@ export function FileList() {
         const fileList = document.getElementById("fileList")!;
         setCurrentFolderName(`${infoResponse.name} :ID ${infoResponse.id}`);
 
-        if (current_folderid !== 0) {
-            const test = document.getElementById("navigationDiv")!;
-            const goBackFunc = document.createElement("button");
-            goBackFunc.onclick = () => { goBack(current_folderid) }
-            goBackFunc.textContent = "Back"
-            test.append(goBackFunc);
-        }
+        appendNavigation(current_folderid);
 
         if (response.folders !== undefined) {
             for (let i: number = 0; i < response.folders.length; i++) {
@@ -205,6 +209,7 @@ export function FileList() {
                 fileList.append(fileDiv);
             }
         }
+
     }
 
     let useEffectRunCount = 0;

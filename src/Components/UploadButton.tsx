@@ -9,6 +9,7 @@ type UploadButtonProps = {
 export function UploadButton({ currentFolderId }: UploadButtonProps) {
     const [files, setFile] = useState<FileList | undefined>();
     const [state, setState] = useState(getLastUploadData());
+    const [progress, setProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     function saveLastUploadData(idString: string, counter: number) {
@@ -46,9 +47,13 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
             return
         }
         setState("Uploading files...");
-        const results = await UploadFile(files!, currentFolderId);
+        setProgress(0);
+        const results = await UploadFile(files!, currentFolderId, (loaded, total) => {
+            setProgress(Math.round((loaded / total) * 100));
+        });
         if (results.length === 0) {
             setState("Failed to upload files");
+            setProgress(0);
             return;
         }
         let uploadedFilesId = "";
@@ -60,13 +65,20 @@ export function UploadButton({ currentFolderId }: UploadButtonProps) {
             uploadedFilesId += `${results.files[i].fileId}, `
         }
         fileInputRef.current!.value = '';
-        saveLastUploadData(`Uploaded ${uploadedFilesId}`, 0)
+        saveLastUploadData(`Uploaded ${uploadedFilesId}`, 0);
+        setProgress(0);
         window.location.reload();
     }
 
     return (
         <div className="uploadButtonDiv">
             <p>{state}</p>
+            {progress > 0 && (
+                <div className="uploadProgressContainer">
+                    <progress className="uploadProgress" value={progress} max={100} />
+                    <span className="uploadProgressText">{progress}%</span>
+                </div>
+            )}
             <input ref={fileInputRef} onChange={handleOnChange} type="file" multiple id="fileInput"/>
             <button onClick={handleFileUpload}>Upload file to {currentFolderId}</button>
         </div>

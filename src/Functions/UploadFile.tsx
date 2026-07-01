@@ -1,4 +1,8 @@
-export async function UploadFile(files: FileList, folderID_upload: number): Promise<any> {
+import axios from "axios";
+
+type OnProgress = (loaded: number, total: number) => void;
+
+export async function UploadFile(files: FileList, folderID_upload: number, onProgress?: OnProgress): Promise<any> {
     if (typeof files === "undefined") {
         console.error("No file uploaded");
         return [];
@@ -10,20 +14,23 @@ export async function UploadFile(files: FileList, folderID_upload: number): Prom
     }
     formData.append("folderid", folderID_upload.toString());
     console.log("SEND");
-    return await fetch(
-        `${process.env.REACT_APP_API_URL}/api/file/upload`,
-        {
-            method: "POST",
-            credentials: "include",
-            body: formData,
-        }
-    )
-        .then((r) => {
-            console.log("status", r.status);
-            return r.json();
-        })
-        .catch((err) => {
-            console.log(err);
-            return [];
-        });
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}/api/file/upload`,
+            formData,
+            {
+                withCredentials: true,
+                onUploadProgress: (progressEvent) => {
+                    if (onProgress && progressEvent.total) {
+                        onProgress(progressEvent.loaded, progressEvent.total);
+                    }
+                },
+            }
+        );
+        console.log("status", response.status);
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
 }
