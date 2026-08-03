@@ -3,14 +3,23 @@ import { downloadFile } from "../Functions/DownloadFile";
 import no_thumbnail_file from "../Media/file.png"
 import folderIcon from "../Media/folder.png"
 import { UploadButton } from "./UploadButton";
+import { FilePreviewModal } from "./FilePreviewModal";
 import "../Styles/filelist.css"
 import { CreateFolder } from "../Functions/CreateFolder";
 import { FileItemDTO, FolderItemDTO } from "../types";
 
+const PREVIEW_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg", ".mp4", ".webm", ".ogg", ".mov", ".avi", ".mkv"];
+
+function isPreviewable(fileName: string): boolean {
+  const lower = fileName.toLowerCase();
+  return PREVIEW_EXTENSIONS.some(ext => lower.endsWith(ext));
+}
+
 export function FileList() {
   const [folderId, setFolderId] = useState(checkSessionStorageFolderID());
   const [navigationHistory, setNavigationHistory] = useState<number[]>(checkSessionStorageNavigationHistory());
-  const [currentFolderName, setCurrentFolderName] = useState("");
+  const [forwardStack, setForwardStack] = useState<Array<{id: number, name: string}>>(checkSessionStorageForwardStack());
+  const [breadcrumbs, setBreadcrumbs] = useState<Array<{id: number, name: string}>>(checkSessionStorageBreadcrumbs());
   const [sortType, setSortType] = useState(checkSessionStorageSorting());
   const [filterType, setFilterType] = useState("DEFAULT");
   const [viewMode, setViewMode] = useState(checkLocalStorageViewMode());
@@ -27,8 +36,11 @@ export function FileList() {
 
   const [message, setMessage] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [previewFile, setPreviewFile] = useState<FileItemDTO | null>(null);
 
   const renameInputRef = useRef<HTMLInputElement>(null);
+  const menuContainerRef = useRef<HTMLDivElement>(null);
 
   function checkSessionStorageSorting(): string {
     const stored = sessionStorage.getItem("file_list");
@@ -54,11 +66,25 @@ export function FileList() {
     return JSON.parse(stored).current_folder;
   }
 
-  function updateSessionStorage(currentFolder: number, navHistory: number[]) {
+  function checkSessionStorageForwardStack(): Array<{id: number, name: string}> {
+    const stored = sessionStorage.getItem("file_list");
+    if (stored === null) return [];
+    return JSON.parse(stored).forward_stack || [];
+  }
+
+  function checkSessionStorageBreadcrumbs(): Array<{id: number, name: string}> {
+    const stored = sessionStorage.getItem("file_list");
+    if (stored === null) return [{ id: 0, name: "Root" }];
+    return JSON.parse(stored).breadcrumbs || [{ id: 0, name: "Root" }];
+  }
+
+  function updateSessionStorage(currentFolder: number, navHistory: number[], fwdStack: Array<{id: number, name: string}>, crumbs: Array<{id: number, name: string}>) {
     sessionStorage.setItem("file_list", JSON.stringify({
       current_folder: currentFolder,
       navigation_history: navHistory,
-      sort_type: sortType
+      forward_stack: fwdStack,
+      sort_type: sortType,
+      breadcrumbs: crumbs
     }));
     localStorage.setItem("file_list", JSON.stringify({ view_mode: viewMode }));
   }
@@ -112,21 +138,34 @@ export function FileList() {
     localStorage.setItem("file_list", JSON.stringify({ view_mode: chosenValue }));
   }
 
-  function appendToHistory(newFolderId: number) {
-    setNavigationHistory(prev => {
-      if (newFolderId === 0) return [0];
-      return [...prev, newFolderId];
-    });
-  }
-
   function goBack() {
     if (navigationHistory.length <= 1) return;
-    const next = [...navigationHistory];
-    next.pop();
-    const prevFolderId = next[next.length - 1];
+    const newHistory = [...navigationHistory];
+    newHistory.pop();
+    const prevFolderId = newHistory[newHistory.length - 1];
+    const poppedCrumb = breadcrumbs[breadcrumbs.length - 1];
+    const newForwardStack = [...forwardStack, poppedCrumb];
+    const newCrumbs = breadcrumbs.slice(0, -1);
+
     setFolderId(prevFolderId);
-    setNavigationHistory(next);
-    updateSessionStorage(prevFolderId, next);
+    setNavigationHistory(newHistory);
+    setForwardStack(newForwardStack);
+    setBreadcrumbs(newCrumbs);
+    updateSessionStorage(prevFolderId, newHistory, newForwardStack, newCrumbs);
+  }
+
+  function goForward() {
+    if (forwardStack.length === 0) return;
+    const newForwardStack = [...forwardStack];
+    const nextCrumb = newForwardStack.pop()!;
+    const newHistory = [...navigationHistory, nextCrumb.id];
+    const newCrumbs = [...breadcrumbs, nextCrumb];
+
+    setFolderId(nextCrumb.id);
+    setNavigationHistory(newHistory);
+    setForwardStack(newForwardStack);
+    setBreadcrumbs(newCrumbs);
+    updateSessionStorage(nextCrumb.id, newHistory, newForwardStack, newCrumbs);
   }
 
   const fetchFolderInfo = async (currentFolderId: number) => {
@@ -162,7 +201,12 @@ export function FileList() {
     }
     const infoResponse = await fetchFolderInfo(currentFolderId);
     if (infoResponse) {
-      setCurrentFolderName(`${infoResponse.name} :ID ${infoResponse.id}`);
+      setBreadcrumbs(prev => {
+        if (prev.length === 0) return [{ id: infoResponse.id, name: infoResponse.name }];
+        const updated = [...prev];
+        updated[updated.length - 1] = { id: infoResponse.id, name: infoResponse.name };
+        return updated;
+      });
     }
     if (response) {
       setFiles(response.files || []);
@@ -173,7 +217,7 @@ export function FileList() {
   const dataLoadedRef = useRef(false);
   useEffect(() => {
     loadData(folderId, sortType, filterType);
-    updateSessionStorage(folderId, navigationHistory);
+    updateSessionStorage(folderId, navigationHistory, forwardStack, breadcrumbs);
     dataLoadedRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId, sortType, filterType]);
@@ -185,7 +229,39 @@ export function FileList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewMode]);
 
-  const hasBack = navigationHistory.length > 1;
+  useEffect(() => {
+    const stored = sessionStorage.getItem("file_list");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (!parsed.breadcrumbs && navigationHistory.length > 1) {
+        (async () => {
+          const newCrumbs: Array<{id: number, name: string}> = [];
+          for (const id of navigationHistory) {
+            if (id === 0) {
+              newCrumbs.push({ id: 0, name: "Root" });
+            } else {
+              const info = await fetchFolderInfo(id);
+              newCrumbs.push({ id: info.id, name: info.name || "?" });
+            }
+          }
+          setBreadcrumbs(newCrumbs);
+        })();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuContainerRef.current && !menuContainerRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    }
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMenu]);
 
   async function handleDeleteSelected() {
     setShowDeleteConfirm(true);
@@ -319,41 +395,97 @@ export function FileList() {
 
   function handleFolderNavigate(fld: FolderItemDTO) {
     setFolderId(fld.id);
-    appendToHistory(fld.id);
+    setForwardStack([]);
+    if (fld.id === 0) {
+      setNavigationHistory([0]);
+      setBreadcrumbs([{ id: 0, name: "Root" }]);
+    } else {
+      setNavigationHistory(prev => [...prev, fld.id]);
+      setBreadcrumbs(prev => [...prev, { id: fld.id, name: fld.name }]);
+    }
+  }
+
+  function navigateToBreadcrumb(index: number) {
+    const targetCrumb = breadcrumbs[index];
+    const newHistory = navigationHistory.slice(0, index + 1);
+    const newCrumbs = breadcrumbs.slice(0, index + 1);
+
+    setFolderId(targetCrumb.id);
+    setNavigationHistory(newHistory);
+    setBreadcrumbs(newCrumbs);
+    setForwardStack([]);
+    updateSessionStorage(targetCrumb.id, newHistory, [], newCrumbs);
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <h1>{currentFolderName}</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div id="navigationDiv">
+          <button className="nav-btn back-btn" onClick={goBack} disabled={navigationHistory.length <= 1}>
+            ← Back
+          </button>
+          <button className="nav-btn forward-btn" onClick={goForward} disabled={forwardStack.length === 0}>
+            Forward →
+          </button>
+        </div>
+        <div ref={menuContainerRef} style={{ position: 'relative' }}>
+          <button className="add-btn" onClick={() => setShowMenu(prev => !prev)}>+</button>
+          {showMenu && (
+            <div className="popup-menu">
+              <CreateFolder currentFolderId={folderId} />
+              <UploadButton currentFolderId={folderId} />
+              <button
+                className={`popup-btn select-mode-btn ${selectMode ? 'active' : ''}`}
+                onClick={toggleSelectMode}
+              >
+                {selectMode ? 'Exit Select Mode' : 'Select Mode'}
+              </button>
+              <label className="popup-label">
+                Sort:
+                <select value={sortType} onChange={e => onSortChange(e.target.value)}>
+                  <option value="DEFAULT">No sorting</option>
+                  <option value="ALPHABETICAL">A-Z</option>
+                  <option value="REVERSE_ALPHABETICAL">Z-A</option>
+                  <option value="NEWEST">Newest first</option>
+                  <option value="OLDEST">Oldest first</option>
+                  <option value="SIZE">Size highest</option>
+                  <option value="SIZE_LOWEST">Size lowest</option>
+                </select>
+              </label>
+              <label className="popup-label">
+                Filter:
+                <select value={filterType} onChange={e => onFilterChange(e.target.value)}>
+                  <option value="DEFAULT">No filter</option>
+                  <option value="FILES_ONLY">Files only</option>
+                  <option value="FOLDERS_ONLY">Folders only</option>
+                  <option value="KEYWORD">Keyword</option>
+                </select>
+              </label>
+              <label className="popup-label">
+                View:
+                <select value={viewMode} onChange={e => onViewModeChange(e.target.value)}>
+                  <option value="GRID">Grid</option>
+                  <option value="LIST">List</option>
+                </select>
+              </label>
+            </div>
+          )}
+        </div>
+      </div>
 
-      <div className="toolbar">
-        <CreateFolder currentFolderId={folderId} />
-        <UploadButton currentFolderId={folderId} />
-        <button
-          className={`select-mode-btn ${selectMode ? 'active' : ''}`}
-          onClick={toggleSelectMode}
-        >
-          {selectMode ? 'Exit Select Mode' : 'Select Mode'}
-        </button>
-        <select value={sortType} onChange={e => onSortChange(e.target.value)}>
-          <option value="DEFAULT">No sorting</option>
-          <option value="ALPHABETICAL">A-Z</option>
-          <option value="REVERSE_ALPHABETICAL">Z-A</option>
-          <option value="NEWEST">Newest first</option>
-          <option value="OLDEST">Oldest first</option>
-          <option value="SIZE">Size highest</option>
-          <option value="SIZE_LOWEST">Size lowest</option>
-        </select>
-        <select value={filterType} onChange={e => onFilterChange(e.target.value)}>
-          <option value="DEFAULT">No filter</option>
-          <option value="FILES_ONLY">Files only</option>
-          <option value="FOLDERS_ONLY">Folders only</option>
-          <option value="KEYWORD">Keyword</option>
-        </select>
-        <select value={viewMode} onChange={e => onViewModeChange(e.target.value)}>
-          <option value="GRID">Grid</option>
-          <option value="LIST">List</option>
-        </select>
+      <div className="breadcrumb-bar">
+        {breadcrumbs.map((crumb, index) => (
+          <span key={crumb.id} className="breadcrumb-item">
+            {index > 0 && <span className="breadcrumb-separator"> / </span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span className="breadcrumb-current">{crumb.name}</span>
+            ) : (
+              <span className="breadcrumb-link" onClick={() => navigateToBreadcrumb(index)}>
+                {crumb.name}
+              </span>
+            )}
+          </span>
+        ))}
       </div>
 
       {selectedCount > 0 && (
@@ -381,12 +513,6 @@ export function FileList() {
           <button className="action-btn cancel-selection-btn" onClick={clearSelection}>
             Cancel Selection
           </button>
-        </div>
-      )}
-
-      {hasBack && (
-        <div id="navigationDiv">
-          <button className="back-btn" onClick={goBack}>Back</button>
         </div>
       )}
 
@@ -453,7 +579,7 @@ export function FileList() {
                     : no_thumbnail_file
                   }
                   alt="file"
-                  onClick={() => downloadFile(f.id)}
+                  onClick={() => isPreviewable(f.name) ? setPreviewFile(f) : downloadFile(f.id)}
                 />
                 {renamingItem && renamingItem.type === 'file' && renamingItem.id === f.id ? (
                   <input
@@ -466,7 +592,7 @@ export function FileList() {
                     onClick={e => e.stopPropagation()}
                   />
                 ) : (
-                  <p onClick={() => downloadFile(f.id)}>{f.name}</p>
+                  <p onClick={() => isPreviewable(f.name) ? setPreviewFile(f) : downloadFile(f.id)}>{f.name}</p>
                 )}
               </div>
             ))}
@@ -492,6 +618,16 @@ export function FileList() {
             </div>
           </div>
         </div>
+      )}
+
+      {previewFile && (
+        <FilePreviewModal
+          fileId={previewFile.id}
+          fileName={previewFile.name}
+          onClose={() => setPreviewFile(null)}
+          onDeleted={() => { setPreviewFile(null); loadData(folderId, sortType, filterType); }}
+          onRenamed={() => { setPreviewFile(null); loadData(folderId, sortType, filterType); }}
+        />
       )}
     </div>
   );

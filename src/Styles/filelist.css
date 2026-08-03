@@ -262,7 +262,7 @@
     font-size: 16px;
 }
 
-.back-btn {
+.nav-btn {
     padding: 6px 14px;
     border: 2px solid var(--button-bg);
     border-radius: 6px;
@@ -273,9 +273,102 @@
     transition: all 0.2s;
 }
 
-.back-btn:hover {
+.nav-btn:hover:not(:disabled) {
     background: linear-gradient(to bottom, var(--button-hover-start) 5%, var(--button-hover-end) 100%);
     border-color: var(--button-hover-start);
+}
+
+.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.breadcrumb-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.breadcrumb-link {
+    cursor: pointer;
+    color: var(--hover-bg);
+    transition: opacity 0.2s;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.breadcrumb-current {
+    font-weight: 600;
+}
+
+.breadcrumb-separator {
+    margin: 0 6px;
+    opacity: 0.5;
+}
+
+.add-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--button-bg);
+    background: transparent;
+    color: var(--text-color);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.add-btn:hover {
+    background: linear-gradient(to bottom, var(--button-hover-start) 5%, var(--button-hover-end) 100%);
+    border-color: var(--button-hover-start);
+}
+
+.popup-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 240px;
+    background-color: var(--file-card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.popup-btn {
+    width: 100%;
+}
+
+.popup-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--text-color);
+}
+
+.popup-label select {
+    width: 100%;
+    padding: 6px 8px;
+    border: 2px solid var(--input-border, #666);
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
 }
 
 .modal-overlay {
@@ -354,6 +447,201 @@
     background: linear-gradient(to bottom, #95a5a6 5%, #7f8c8d 100%);
     border-color: #95a5a6;
     color: white;
+}
+
+.preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+}
+
+.preview-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90vw;
+    max-height: 90vh;
+    position: relative;
+}
+
+.preview-close {
+    position: absolute;
+    top: -40px;
+    right: -10px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.preview-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.preview-content-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 80vw;
+    max-height: 70vh;
+    overflow: hidden;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.preview-video {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 8px;
+    outline: none;
+}
+
+.preview-filename {
+    color: white;
+    margin: 12px 0 8px;
+    font-size: 14px;
+    text-align: center;
+    max-width: 80vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.preview-btn {
+    padding: 8px 18px;
+    border: 2px solid var(--button-bg);
+    border-radius: 6px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.preview-btn:hover {
+    background: linear-gradient(to bottom, var(--button-hover-start) 5%, var(--button-hover-end) 100%);
+    border-color: var(--button-hover-start);
+}
+
+.preview-download-btn {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.preview-download-btn:hover {
+    background: linear-gradient(to bottom, #3498db 5%, #2980b9 100%);
+    border-color: #3498db;
+    color: white;
+}
+
+.preview-rename-btn {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+.preview-rename-btn:hover {
+    background: linear-gradient(to bottom, #f39c12 5%, #e67e22 100%);
+    border-color: #f39c12;
+    color: white;
+}
+
+.preview-delete-btn {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.preview-delete-btn:hover {
+    background: linear-gradient(to bottom, #e74c3c 5%, #c0392b 100%);
+    border-color: #e74c3c;
+    color: white;
+}
+
+.preview-cancel-btn {
+    border-color: #95a5a6;
+    color: #95a5a6;
+}
+
+.preview-cancel-btn:hover {
+    background: linear-gradient(to bottom, #95a5a6 5%, #7f8c8d 100%);
+    border-color: #95a5a6;
+    color: white;
+}
+
+.preview-rename-inline {
+    display: flex;
+}
+
+.preview-rename-input {
+    padding: 6px 10px;
+    border: 2px solid var(--hover-bg);
+    border-radius: 6px;
+    font-size: 13px;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    outline: none;
+    width: 180px;
+}
+
+.preview-confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1003;
+}
+
+.preview-confirm-dialog {
+    background-color: var(--file-card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 280px;
+    max-width: 380px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+.preview-confirm-dialog p {
+    margin: 0 0 16px;
+    color: var(--text-color);
+    font-size: 15px;
+}
+
+.preview-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
